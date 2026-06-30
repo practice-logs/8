@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spyder — Device Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+/* ═══════════════ TOKENS ═══════════════ */
+:root {
+  --c:    #00f0ff;
+  --c2:   #7c3aed;
+  --c3:   #10b981;
+  --c4:   #f59e0b;
+  --cr:   #ef4444;
+  --bg:   #03040d;
+  --bg2:  #07091a;
+  --bg3:  #0c0f26;
+  --card: rgba(12,15,38,.82);
+  --bdr:  rgba(255,255,255,.07);
+  --bdr2: rgba(0,240,255,.22);
+  --txt:  #e4e8ff;
+  --m:    #6b7db3;
+  --m2:   #9ba8d4;
+  --r:    14px;
+  --r2:   22px;
+  --fb:   'DM Sans', sans-serif;
+  --fh:   'Sora', sans-serif;
+  --fm:   'IBM Plex Mono', monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+body {
+  font-family: var(--fb);
+  background: var(--bg);
+  color: var(--txt);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ═══ BACKGROUND ═══ */
+body::before {
+  content:'';
+  position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80vw 60vh at 20% -10%, rgba(0,240,255,.055) 0%, transparent 60%),
+    radial-gradient(ellipse 60vw 50vh at 85% 100%, rgba(124,58,237,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40vw 30vh at 50% 50%, rgba(16,185,129,.025) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+/* Dot grid */
+body::after {
+  content:'';
+  position:fixed;inset:0;z-index:0;
+  background-image: radial-gradient(rgba(255,255,255,.028) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events:none;
+}
+
+/* ═══ PARTICLES CANVAS ═══ */
+#particles-canvas {
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+}
+
+/* ═══ NAV ═══ */
+nav {
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5%;height:60px;
+  background:rgba(3,4,13,.75);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bdr);
+  transition:all .3s;
+}
+nav.scrolled { background:rgba(3,4,13,.96);border-bottom-color:rgba(0,240,255,.15); }
+
+.logo {
+  display:flex;align-items:center;gap:9px;
+  font-family:var(--fh);font-size:20px;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;
+  text-decoration:none;
+  background:linear-gradient(110deg,var(--c),var(--c2));
+  -webkit-background-clip:text;color:transparent;
+}
+.logo svg { flex-shrink:0; }
+
+.nav-links {
+  display:flex;align-items:center;gap:28px;list-style:none;
+}
+.nav-links a {
+  font-size:13px;font-weight:500;color:var(--m2);
+  text-decoration:none;letter-spacing:.04em;
+  transition:color .2s;
+}
+.nav-links a:hover { color:var(--c); }
+
+.nav-ham {
+  display:none;background:none;border:none;
+  color:var(--m2);font-size:18px;cursor:pointer;
+}
+.mob-menu {
+  display:none;position:fixed;top:60px;left:0;right:0;
+  background:rgba(7,9,26,.97);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bdr);
+  padding:20px 5%;flex-direction:column;gap:16px;z-index:999;
+}
+.mob-menu.open{display:flex}
+.mob-menu a{color:var(--m2);text-decoration:none;font-size:15px;font-weight:500;transition:color .2s}
+.mob-menu a:hover{color:var(--c)}
+
+/* ═══ HERO ═══ */
+#hero {
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  padding-top:60px;
+  position:relative;z-index:1;
+}
+
+/* LEFT PANEL */
+.hero-l {
+  display:flex;flex-direction:column;justify-content:center;
+  padding:40px 4% 40px 7%;
+  position:relative;
+}
+
+.hero-pill {
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 13px;border-radius:999px;
+  font-family:var(--fm);font-size:10px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  background:rgba(0,240,255,.08);
+  border:1px solid rgba(0,240,255,.2);
+  color:var(--c);margin-bottom:20px;
+  width:fit-content;
+}
+.hero-pill .dot {
+  width:6px;height:6px;border-radius:50%;
+  background:var(--c);
+  animation:pdot 1.8s infinite;
+}
+@keyframes pdot{0%,100%{box-shadow:0 0 0 0 rgba(0,240,255,.7)}50%{box-shadow:0 0 0 5px rgba(0,240,255,0)}}
+
+.hero-h1 {
+  font-family:var(--fh);
+  font-size:clamp(30px,4.5vw,56px);
+  font-weight:700;line-height:1.08;
+  letter-spacing:-.02em;
+  margin-bottom:16px;
+}
+.hero-h1 .g {
+  background:linear-gradient(120deg,var(--c) 10%,var(--c2) 90%);
+  -webkit-background-clip:text;color:transparent;
+}
+
+.hero-sub {
+  font-size:15px;color:var(--m2);line-height:1.75;
+  max-width:400px;margin-bottom:28px;
+}
+
+/* Mini visualization */
+.hero-viz {
+  position:relative;
+  background:rgba(12,15,38,.6);
+  border:1px solid var(--bdr);
+  border-radius:14px;
+  padding:16px;
+  overflow:hidden;
+}
+.viz-label {
+  font-family:var(--fm);font-size:9px;color:var(--m);
+  text-transform:uppercase;letter-spacing:.1em;
+  margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;
+}
+.viz-label::before {
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--c3);
+  animation:pdot 2s infinite;
+}
+
+/* Module pills */
+.module-pills {
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;
+}
+.mpill {
+  padding:3px 10px;border-radius:999px;
+  font-size:10px;font-weight:600;letter-spacing:.04em;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--bdr);
+  color:var(--m2);
+  display:flex;align-items:center;gap:5px;
+}
+.mpill i{font-size:9px;}
+.mpill.c{border-color:rgba(0,240,255,.2);color:var(--c);}
+.mpill.p{border-color:rgba(124,58,237,.2);color:#a78bfa;}
+.mpill.g{border-color:rgba(16,185,129,.2);color:#34d399;}
+.mpill.o{border-color:rgba(245,158,11,.2);color:#fbbf24;}
+
+/* RIGHT PANEL — Login */
+.hero-r {
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 7% 40px 4%;
+  position:relative;
+}
+
+.hero-r::before {
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 50%, rgba(0,240,255,.06), transparent 65%);
+  pointer-events:none;
+}
+
+/* ═══ AUTH BOX ═══ */
+.auth-wrap { width:100%;max-width:400px;z-index:2; }
+
+.auth-card {
+  background:linear-gradient(145deg,rgba(12,15,38,.9),rgba(7,9,26,.85));
+  backdrop-filter:blur(30px);
+  border:1px solid rgba(0,240,255,.18);
+  border-radius:var(--r2);
+  padding:32px 28px;
+  position:relative;overflow:hidden;
+  box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 40px rgba(0,240,255,.04),inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+/* top accent line */
+.auth-card::before {
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--c),var(--c2),transparent);
+  animation:scanX 3s linear infinite;
+}
+@keyframes scanX{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* scan line */
+.scan {
+  position:absolute;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,240,255,.3),transparent);
+  animation:scanY 4s linear infinite;top:0;
+}
+@keyframes scanY{0%{top:0;opacity:.8}100%{top:100%;opacity:0}}
+
+.auth-logo {
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  margin-bottom:24px;
+}
+.auth-logo-icon {
+  width:48px;height:48px;
+  display:flex;align-items:center;justify-content:center;
+}
+.auth-title {
+  font-family:var(--fh);font-size:26px;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;
+  background:linear-gradient(110deg,var(--c),var(--c2));
+  -webkit-background-clip:text;color:transparent;
+}
+.auth-sub {
+  font-family:var(--fm);font-size:10px;
+  color:var(--m);letter-spacing:.1em;text-transform:uppercase;
+  margin-top:2px;
+}
+
+/* Inputs */
+.inp-group { position:relative;margin-bottom:14px; }
+.inp-icon {
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  color:var(--m);font-size:13px;z-index:2;transition:color .18s;
+}
+.inp-group:focus-within .inp-icon { color:var(--c); }
+
+.eye-btn {
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:var(--m);font-size:13px;
+  cursor:pointer;z-index:3;padding:3px;border-radius:4px;
+  transition:color .18s;
+}
+.eye-btn:hover{color:var(--c)}
+
+.inp {
+  width:100%;
+  padding:12px 40px 12px 38px;
+  background:rgba(7,9,26,.9);
+  border:1px solid rgba(148,163,184,.2);
+  border-radius:10px;
+  color:var(--txt);
+  font-family:var(--fb);font-size:14px;font-weight:500;
+  transition:all .18s;
+}
+.inp:focus {
+  outline:none;
+  border-color:var(--c);
+  box-shadow:0 0 0 3px rgba(0,240,255,.1),0 8px 20px rgba(0,0,0,.4);
+  transform:translateY(-1px);
+}
+.inp::placeholder{color:var(--m);}
+
+.rem {
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;
+}
+.rem-check {
+  width:16px;height:16px;appearance:none;border-radius:5px;
+  border:1px solid rgba(148,163,184,.35);background:rgba(7,9,26,.9);
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;transition:all .16s;
+}
+.rem-check::after{
+  content:'';width:8px;height:8px;border-radius:3px;
+  background:linear-gradient(135deg,var(--c),var(--c2));
+  opacity:0;transform:scale(.4);transition:all .16s;
+}
+.rem-check:checked{border-color:var(--c);}
+.rem-check:checked::after{opacity:1;transform:scale(1);}
+.rem-label{font-size:13px;color:var(--m2);cursor:pointer;user-select:none;}
+
+.auth-btn {
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,rgba(0,240,255,.85),rgba(0,180,210,1));
+  border:none;border-radius:999px;
+  color:#00080f;font-family:var(--fb);font-size:14px;font-weight:700;
+  cursor:pointer;margin-bottom:14px;
+  position:relative;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(0,240,255,.5),0 10px 28px rgba(0,200,255,.25);
+  transition:all .15s;
+  letter-spacing:.04em;
+}
+.auth-btn:hover{transform:translateY(-1px);box-shadow:0 0 0 1px var(--c),0 16px 36px rgba(0,200,255,.35);}
+.auth-btn:active{transform:translateY(1px);}
+.auth-btn.loading span{visibility:hidden;opacity:0;}
+.auth-btn.loading::after{
+  content:'';position:absolute;width:18px;height:18px;
+  top:50%;left:50%;margin:-9px 0 0 -9px;
+  border:2px solid rgba(0,0,0,.2);border-top-color:#000;
+  border-radius:50%;animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.auth-links{text-align:center;border-top:1px solid rgba(148,163,184,.12);padding-top:14px;}
+.auth-link {
+  display:block;margin:7px 0;font-size:12px;
+  color:var(--m);cursor:pointer;transition:color .16s;
+  font-weight:500;
+}
+.auth-link:hover{color:var(--c);}
+
+.form{display:none;}
+.form.active{display:block;}
+
+/* Trust row */
+.trust {
+  display:flex;justify-content:center;gap:14px;
+  margin-top:14px;
+}
+.trust-i {
+  display:flex;align-items:center;gap:5px;
+  font-size:10px;color:var(--m);font-family:var(--fm);
+}
+.trust-i i{color:var(--c3);font-size:10px;}
+
+/* ═══ FEATURES ═══ */
+#features { position:relative;z-index:1;padding:80px 5%;background:var(--bg2); }
+.sec-head {
+  text-align:center;margin-bottom:52px;
+}
+.sec-badge {
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:999px;
+  font-family:var(--fm);font-size:10px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  background:rgba(0,240,255,.08);
+  border:1px solid rgba(0,240,255,.18);
+  color:var(--c);margin-bottom:14px;
+}
+.sec-h {
+  font-family:var(--fh);
+  font-size:clamp(26px,4vw,44px);
+  font-weight:700;line-height:1.12;letter-spacing:-.02em;
+}
+.sec-h span{
+  background:linear-gradient(110deg,var(--c),var(--c2));
+  -webkit-background-clip:text;color:transparent;
+}
+.sec-p { font-size:15px;color:var(--m2);margin-top:10px;max-width:500px;margin-left:auto;margin-right:auto; }
+
+.feat-grid {
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:18px;
+}
+
+.fc {
+  background:var(--card);
+  border:1px solid var(--bdr);border-radius:var(--r);
+  padding:24px;position:relative;overflow:hidden;
+  transition:all .3s;cursor:default;
+}
+.fc:hover{
+  border-color:var(--bdr2);transform:translateY(-5px);
+  box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 24px rgba(0,240,255,.06);
+}
+.fc::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--c),var(--c2));
+  transform:scaleX(0);transition:transform .3s;
+}
+.fc:hover::before{transform:scaleX(1);}
+
+.fi {
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:16px;
+}
+.fi-c{background:rgba(0,240,255,.1);color:var(--c);}
+.fi-p{background:rgba(124,58,237,.12);color:#a78bfa;}
+.fi-g{background:rgba(16,185,129,.1);color:#34d399;}
+.fi-o{background:rgba(245,158,11,.1);color:#fbbf24;}
+.fi-r{background:rgba(239,68,68,.1);color:#f87171;}
+.fi-b{background:rgba(59,130,246,.1);color:#60a5fa;}
+
+.ft { font-family:var(--fh);font-size:15px;font-weight:600;margin-bottom:8px;letter-spacing:-.01em; }
+.fd { font-size:13px;color:var(--m2);line-height:1.7; }
+
+/* Mini spark */
+.spark {
+  display:flex;align-items:flex-end;gap:2px;height:30px;margin-top:14px;
+}
+.spark-b {
+  flex:1;border-radius:2px 2px 0 0;
+  opacity:.5;transition:opacity .3s;
+  min-height:4px;
+}
+.fc:hover .spark-b{opacity:1;}
+
+/* ═══ HOW IT WORKS ═══ */
+#how {
+  position:relative;z-index:1;
+  padding:80px 5%;
+}
+.how-inner {
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+}
+
+.how-steps { display:flex;flex-direction:column;gap:0; }
+.hw-step {
+  display:flex;gap:16px;padding:22px 0;
+  border-bottom:1px solid var(--bdr);
+  opacity:.5;transition:opacity .3s;
+}
+.hw-step:last-child{border-bottom:none;}
+.hw-step:hover{opacity:1;}
+.hw-n {
+  flex-shrink:0;
+  width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fm);font-size:13px;font-weight:700;
+  background:linear-gradient(135deg,rgba(0,240,255,.15),rgba(124,58,237,.1));
+  border:1px solid rgba(0,240,255,.2);color:var(--c);
+}
+.hw-body h4{font-family:var(--fh);font-size:15px;font-weight:600;margin-bottom:4px;letter-spacing:-.01em;}
+.hw-body p{font-size:13px;color:var(--m2);line-height:1.65;}
+
+/* Flow diagram */
+.flow-box {
+  background:var(--card);
+  border:1px solid var(--bdr);border-radius:var(--r);
+  overflow:hidden;
+}
+
+/* ═══ PIPELINE ═══ */
+#pipeline { position:relative;z-index:1;padding:80px 5%;background:var(--bg2); }
+.pipe-inner{max-width:1100px;margin:0 auto;}
+.pipe-head{text-align:center;margin-bottom:50px;}
+
+.pipe-stages {
+  display:flex;align-items:stretch;gap:0;
+  background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);
+  overflow:hidden;
+}
+
+.ps {
+  flex:1;padding:24px 16px;
+  border-right:1px solid var(--bdr);
+  position:relative;
+  transition:background .3s;
+}
+.ps:last-child{border-right:none;}
+.ps:hover{background:rgba(0,240,255,.03);}
+
+.ps-num {
+  font-family:var(--fm);font-size:9px;
+  color:var(--m);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;
+}
+.ps-icon {
+  font-size:20px;margin-bottom:8px;display:block;
+}
+.ps-title {
+  font-family:var(--fh);font-size:13px;font-weight:600;
+  margin-bottom:6px;letter-spacing:-.01em;
+}
+.ps-items {
+  display:flex;flex-direction:column;gap:3px;
+}
+.ps-item {
+  font-size:11px;color:var(--m2);display:flex;align-items:center;gap:5px;
+}
+.ps-item::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* Arrow between stages */
+.pipe-arrow {
+  display:flex;align-items:center;justify-content:center;
+  padding:0 2px;flex-shrink:0;
+  position:relative;
+}
+.pipe-arrow svg { width:20px; }
+.arrow-dot {
+  width:6px;height:6px;border-radius:50%;
+  background:var(--c);
+  position:absolute;
+  animation:flowDot 2s linear infinite;
+  left:0;top:50%;transform:translateY(-50%);
+}
+@keyframes flowDot {
+  0%{left:0;opacity:1}
+  100%{left:100%;opacity:.2}
+}
+
+/* Latency bar */
+.lat-bar {
+  display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px 16px;
+  background:rgba(0,240,255,.04);border:1px solid rgba(0,240,255,.1);border-radius:8px;
+}
+.lat-label{font-family:var(--fm);font-size:10px;color:var(--m);text-transform:uppercase;letter-spacing:.08em;}
+.lat-val{font-family:var(--fh);font-size:16px;font-weight:700;color:var(--c);margin-left:auto;}
+.lat-track{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
+.lat-fill{height:100%;background:linear-gradient(90deg,var(--c),var(--c2));border-radius:2px;width:4%;animation:latPulse 3s ease-in-out infinite;}
+@keyframes latPulse{0%,100%{width:4%;opacity:.8}50%{width:8%;opacity:1}}
+
+/* ═══ SECURITY ═══ */
+#security { position:relative;z-index:1;padding:80px 5%; }
+.sec-inner {
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+}
+.sec-cards {
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+}
+.sec-card {
+  background:var(--card);border:1px solid var(--bdr);
+  border-radius:var(--r);padding:20px;
+  transition:all .3s;
+}
+.sec-card:hover{border-color:var(--bdr2);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.sec-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:10px;}
+.sec-card h4{font-family:var(--fh);font-size:13px;font-weight:600;margin-bottom:5px;letter-spacing:-.01em;}
+.sec-card p{font-size:12px;color:var(--m);line-height:1.6;}
+
+/* Radar svg wrapper */
+.radar-wrap {
+  background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:24px;
+}
+
+/* ═══ CTA ═══ */
+#cta { position:relative;z-index:1;padding:80px 5%;text-align:center;background:var(--bg2); }
+.cta-inner{max-width:600px;margin:0 auto;}
+.cta-h {
+  font-family:var(--fh);
+  font-size:clamp(28px,4vw,48px);font-weight:700;
+  letter-spacing:-.02em;line-height:1.1;margin-bottom:14px;
+}
+.cta-h span{background:linear-gradient(110deg,var(--c),var(--c2));-webkit-background-clip:text;color:transparent;}
+.cta-p{font-size:15px;color:var(--m2);margin-bottom:32px;}
+.cta-btn {
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 32px;border-radius:999px;
+  background:linear-gradient(135deg,var(--c),#0891b2);
+  color:#00080f;font-family:var(--fb);font-size:14px;font-weight:700;
+  text-decoration:none;cursor:pointer;border:none;
+  box-shadow:0 0 0 1px rgba(0,240,255,.4),0 14px 36px rgba(0,200,255,.25);
+  transition:all .18s;letter-spacing:.04em;
+}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 0 0 1px var(--c),0 20px 48px rgba(0,200,255,.4);}
+
+/* ═══ FOOTER ═══ */
+footer {
+  position:relative;z-index:1;
+  border-top:1px solid var(--bdr);
+  background:var(--bg2);
+  padding:48px 5% 28px;
+}
+.foot-inner {
+  max-width:1200px;margin:0 auto;
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:40px;
+  margin-bottom:40px;
+}
+.foot-brand h2 {
+  font-family:var(--fh);font-size:22px;font-weight:700;letter-spacing:.1em;
+  background:linear-gradient(110deg,var(--c),var(--c2));
+  -webkit-background-clip:text;color:transparent;margin-bottom:10px;
+}
+.foot-brand p{font-size:13px;color:var(--m);line-height:1.7;max-width:280px;margin-bottom:16px;}
+.socials{display:flex;gap:10px;}
+.sb {
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.04);border:1px solid var(--bdr);
+  color:var(--m);text-decoration:none;font-size:13px;
+  transition:all .2s;
+}
+.sb:hover{background:rgba(0,240,255,.08);color:var(--c);border-color:rgba(0,240,255,.25);}
+.fc-h{
+  font-family:var(--fh);font-size:11px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.12em;
+  color:var(--m2);margin-bottom:12px;
+}
+.fc-l{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.fc-l a{font-size:13px;color:var(--m);text-decoration:none;transition:color .2s;}
+.fc-l a:hover{color:var(--c);}
+.foot-bottom {
+  max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:24px;border-top:1px solid var(--bdr);
+  font-size:12px;color:var(--m);
+  flex-wrap:wrap;gap:12px;
+}
+.foot-badges{display:flex;gap:10px;flex-wrap:wrap;}
+.fbadge {
+  display:flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:999px;
+  background:rgba(255,255,255,.04);border:1px solid var(--bdr);
+  font-size:10px;font-weight:600;color:var(--m);
+  text-transform:uppercase;letter-spacing:.06em;
+}
+.fbadge i{color:var(--c3);font-size:9px;}
+
+/* ═══ NOTIFICATIONS ═══ */
+.notif {
+  position:fixed;top:72px;right:20px;z-index:10000;
+  background:rgba(7,9,26,.97);backdrop-filter:blur(20px);
+  border:1px solid rgba(148,163,184,.3);border-radius:12px;
+  padding:12px 14px;display:flex;align-items:center;gap:9px;
+  font-size:13px;font-weight:500;color:var(--txt);
+  box-shadow:0 16px 36px rgba(0,0,0,.8);max-width:360px;
+  transform:translateX(420px);animation:slideIn .22s cubic-bezier(.4,0,.2,1) forwards;
+}
+.notif--success{border-left:3px solid #22c55e;}
+.notif--error{border-left:3px solid #f87171;}
+.notif i{font-size:16px;}
+.notif--success i{color:#4ade80;}
+.notif--error i{color:#fca5a5;}
+.notif button{background:none;border:none;color:var(--m);font-size:16px;cursor:pointer;margin-left:auto;padding:0;}
+@keyframes slideIn{to{transform:translateX(0)}}
+
+/* ═══ SCROLL REVEAL ═══ */
+.rv{opacity:0;transform:translateY(32px);transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1);}
+.rv-l{opacity:0;transform:translateX(-32px);transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1);}
+.rv-r{opacity:0;transform:translateX(32px);transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1);}
+.rv.on,.rv-l.on,.rv-r.on{opacity:1;transform:none;}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1100px){
+  .feat-grid{grid-template-columns:repeat(2,1fr);}
+  .foot-inner{grid-template-columns:1fr 1fr;gap:28px;}
+}
+@media(max-width:860px){
+  #hero{grid-template-columns:1fr;padding-top:60px;}
+  .hero-l{order:2;padding:32px 5%;}
+  .hero-r{order:1;padding:28px 5% 0;}
+  .auth-wrap{max-width:100%;}
+  .how-inner,.sec-inner{grid-template-columns:1fr;gap:32px;}
+  .pipe-stages{flex-direction:column;}
+  .pipe-arrow{display:none;}
+  .ps{border-right:none;border-bottom:1px solid var(--bdr);}
+  .ps:last-child{border-bottom:none;}
+  .foot-inner{grid-template-columns:1fr 1fr;gap:24px;}
+}
+@media(max-width:640px){
+  .nav-links{display:none;}
+  .nav-ham{display:block;}
+  .feat-grid{grid-template-columns:1fr;}
+  .sec-cards{grid-template-columns:1fr;}
+  .foot-inner{
+    grid-template-columns:1fr;
+    gap:28px;
+  }
+  .foot-brand{
+    border-bottom:1px solid var(--bdr);
+    padding-bottom:24px;
+  }
+  .foot-brand p{max-width:100%;}
+  .foot-cols-wrap{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+  }
+  .foot-bottom{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+  }
+  .foot-badges{justify-content:flex-start;}
+  .hero-h1{font-size:clamp(26px,8vw,40px);}
+}
+@media(max-width:420px){
+  .foot-cols-wrap{grid-template-columns:repeat(2,1fr);}
+  .trust{flex-wrap:wrap;gap:8px;}
+  .lat-bar{flex-wrap:wrap;gap:6px;}
+  .lat-track{width:100%;order:3;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <a class="logo" href="#hero">
+    <!-- <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+      <circle cx="13" cy="13" r="12" stroke="url(#nl)" stroke-width="1.2"/>
+      <circle cx="13" cy="13" r="6" stroke="url(#nl)" stroke-width=".8" opacity=".5"/>
+      <circle cx="13" cy="13" r="3" fill="url(#nl)"/>
+      <line x1="13" y1="1" x2="13" y2="25" stroke="url(#nl)" stroke-width=".8" opacity=".4"/>
+      <line x1="1" y1="13" x2="25" y2="13" stroke="url(#nl)" stroke-width=".8" opacity=".4"/>
+      <line x1="4" y1="4" x2="22" y2="22" stroke="url(#nl)" stroke-width=".8" opacity=".3"/>
+      <line x1="22" y1="4" x2="4" y2="22" stroke="url(#nl)" stroke-width=".8" opacity=".3"/>
+      <defs>
+        <linearGradient id="nl" x1="0" y1="0" x2="26" y2="26">
+          <stop offset="0%" stop-color="#00f0ff"/>
+          <stop offset="100%" stop-color="#7c3aed"/>
+        </linearGradient>
+      </defs>
+    </svg> -->
+    Spyder
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="#features">Modules</a></li>
+    <li><a href="#how">Architecture</a></li>
+    <li><a href="#security">Security</a></li>
+    <li><a href="#pipeline">Data Flow</a></li>
+  </ul>
+
+  <button class="nav-ham" id="ham" aria-label="Menu"><i class="fas fa-bars"></i></button>
+</nav>
+
+<div class="mob-menu" id="mobMenu">
+  <a href="#features" onclick="closeMob()">Modules</a>
+  <a href="#how" onclick="closeMob()">Architecture</a>
+  <a href="#security" onclick="closeMob()">Security</a>
+  <a href="#pipeline" onclick="closeMob()">Data Flow</a>
+</div>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+
+  <!-- LEFT -->
+  <div class="hero-l rv">
+    <div class="hero-pill"><span class="dot"></span>Real-Time Intelligence</div>
+
+    <h1 class="hero-h1">
+      Complete device<br>awareness.<br>
+      <span class="g">Zero blind spots.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Live GPS, calls, messages, keystrokes, media and app activity —
+      all streaming to one encrypted dashboard.
+    </p>
+
+    <!-- Mini viz -->
+    <div class="hero-viz">
+      <div class="viz-label">Live activity stream</div>
+      <div class="module-pills" style="margin-top:12px;">
+        <span class="mpill c" onclick="loadPage('home')"><i class="fas fa-home"></i> Dashboard</span>
+<span class="mpill g" onclick="loadPage('calls')"><i class="fas fa-phone-alt"></i> Calls</span>
+<span class="mpill o" onclick="loadPage('sms')"><i class="fas fa-sms"></i> SMS</span>
+<span class="mpill c" onclick="loadPage('contacts')"><i class="fas fa-address-book"></i> Contacts</span>
+<span class="mpill g" onclick="loadPage('locations')"><i class="fas fa-map-marker-alt"></i> Location</span>
+<span class="mpill p" onclick="loadPage('gallery')"><i class="fas fa-images"></i> Gallery</span>
+<span class="mpill o" onclick="loadPage('camera')"><i class="fas fa-camera"></i> Camera</span>
+<span class="mpill c" onclick="loadPage('screen-stream')"><i class="fas fa-desktop"></i> Screen</span>
+<span class="mpill g" onclick="loadPage('apps')"><i class="fas fa-th-large"></i> Apps</span>
+<span class="mpill p" onclick="loadPage('social-media')"><i class="fas fa-share-alt"></i> Social</span>
+<span class="mpill o" onclick="loadPage('filemanager')"><i class="fas fa-folder-open"></i> Files</span>
+<span class="mpill c" onclick="loadPage('siteweb')"><i class="fas fa-globe"></i> Web Data</span>
+<span class="mpill g" onclick="loadPage('remotecontrol')"><i class="fas fa-gamepad"></i> Control</span>
+<span class="mpill p" onclick="loadPage('keylogger')"><i class="fas fa-keyboard"></i> Keys</span>
+<span class="mpill o" onclick="loadPage('statistics')"><i class="fas fa-chart-pie"></i> Analytics</span>
+<span class="mpill p" onclick="loadPage('ghost')"><i class="fas fa-user-secret"></i> Overlay</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT — Login -->
+  <div class="hero-r rv d2">
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="scan"></div>
+
+        <div class="auth-logo">
+          <div class="auth-logo-icon">
+            <!-- <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="22" stroke="url(#al)" stroke-width="1.2" opacity=".5"/>
+              <circle cx="24" cy="24" r="14" stroke="url(#al)" stroke-width=".8" opacity=".35"/>
+              <circle cx="24" cy="24" r="6" stroke="url(#al)" stroke-width=".8" opacity=".4"/>
+              <circle cx="24" cy="24" r="3" fill="url(#al)"/>
+              <line x1="24" y1="2" x2="24" y2="46" stroke="url(#al)" stroke-width=".7" opacity=".25"/>
+              <line x1="2" y1="24" x2="46" y2="24" stroke="url(#al)" stroke-width=".7" opacity=".25"/>
+              <line x1="7" y1="7" x2="41" y2="41" stroke="url(#al)" stroke-width=".7" opacity=".18"/>
+              <line x1="41" y1="7" x2="7" y2="41" stroke="url(#al)" stroke-width=".7" opacity=".18"/>
+              <defs>
+                <linearGradient id="al" x1="0" y1="0" x2="48" y2="48">
+                  <stop offset="0%" stop-color="#00f0ff"/>
+                  <stop offset="100%" stop-color="#7c3aed"/>
+                </linearGradient>
+              </defs>
+            </svg> -->
+          </div>
+          <div class="auth-title">Spyder</div>
+          <div class="auth-sub">Intelligence Platform</div>
+        </div>
+
+        <!-- Login -->
+        <div id="lf" class="form active">
+          <div class="inp-group">
+            <i class="fas fa-envelope inp-icon"></i>
+            <input id="le" type="email" class="inp" placeholder="Email address">
+          </div>
+          <div class="inp-group">
+            <i class="fas fa-lock inp-icon"></i>
+            <button type="button" class="eye-btn fas fa-eye-slash" id="lpe" onclick="togglePw('lp','lpe')"></button>
+            <input id="lp" type="password" class="inp" placeholder="Password" style="padding-right:38px;">
+          </div>
+          <div class="rem">
+            <input type="checkbox" id="rm" class="rem-check">
+            <label for="rm" class="rem-label">Remember me</label>
+          </div>
+          <button id="loginBtn" class="auth-btn" onclick="doLogin()"><span>Sign In</span></button>
+          <div class="auth-links">
+            <span class="auth-link" onclick="showSU()">Create an account</span>
+            <span class="auth-link" onclick="showFP()">Forgot password?</span>
+          </div>
+        </div>
+
+        <!-- Sign Up -->
+        <div id="sf" class="form">
+          <div class="inp-group">
+            <i class="fas fa-envelope inp-icon"></i>
+            <input id="se" type="email" class="inp" placeholder="Email address">
+          </div>
+          <div class="inp-group">
+            <i class="fas fa-lock inp-icon"></i>
+            <button type="button" class="eye-btn fas fa-eye-slash" id="spe" onclick="togglePw('sp','spe')"></button>
+            <input id="sp" type="password" class="inp" placeholder="Password" style="padding-right:38px;">
+          </div>
+          <div class="inp-group">
+            <i class="fas fa-lock inp-icon"></i>
+            <button type="button" class="eye-btn fas fa-eye-slash" id="sce" onclick="togglePw('sc','sce')"></button>
+            <input id="sc" type="password" class="inp" placeholder="Confirm password" style="padding-right:38px;">
+          </div>
+          <button id="signupBtn" class="auth-btn" onclick="doSignup()"><span>Create Account</span></button>
+          <div class="auth-links">
+            <span class="auth-link" onclick="showLI()">Already have an account?</span>
+          </div>
+        </div>
+
+        <!-- Forgot -->
+        <div id="ff" class="form">
+          <div class="inp-group">
+            <i class="fas fa-envelope inp-icon"></i>
+            <input id="fe" type="email" class="inp" placeholder="Email address">
+          </div>
+          <button id="forgotBtn" class="auth-btn" onclick="doForgot()"><span>Send Reset Link</span></button>
+          <div class="auth-links">
+            <span class="auth-link" onclick="showLI()">← Back to sign in</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="trust">
+        <div class="trust-i"><i class="fas fa-shield-halved"></i> E2E Encrypted</div>
+        <div class="trust-i"><i class="fas fa-lock"></i> Secure Auth</div>
+        <div class="trust-i"><i class="fas fa-circle-check"></i> SOC-2 Ready</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ FEATURES ══ -->
+<section id="features">
+  <div class="sec-head">
+    <div class="sec-badge rv"><i class="fas fa-microchip"></i> Platform Modules</div>
+    <h2 class="sec-h rv d1">Every signal.<br><span>One dashboard.</span></h2>
+    <p class="sec-p rv d2">Nine purpose-built modules working in parallel for total device awareness.</p>
+  </div>
+
+  <div class="feat-grid">
+
+    <div class="fc rv d1">
+      <div class="fi fi-c"><i class="fas fa-location-dot"></i></div>
+      <div class="ft">Live GPS Tracking</div>
+      <div class="fd">Real-time coordinate streaming with sub-10-second refresh. Full location history with reverse geocoding — area, city, street.</div>
+      <div class="spark" id="sparkGps"></div>
+    </div>
+
+    <div class="fc rv d2">
+      <div class="fi fi-p"><i class="fas fa-phone-volume"></i></div>
+      <div class="ft">Call Log Intelligence</div>
+      <div class="fd">Full call log capture with direction, contact name, number and duration. Timestamped and filterable across any time range.</div>
+      <div class="spark" id="sparkCall"></div>
+    </div>
+
+    <div class="fc rv d3">
+      <div class="fi fi-g"><i class="fas fa-message"></i></div>
+      <div class="ft">SMS Monitor</div>
+      <div class="fd">Bidirectional message capture — both sent and received — with full body text and contact address.</div>
+      <div class="spark" id="sparkSms"></div>
+    </div>
+
+    <div class="fc rv d1">
+      <div class="fi fi-o"><i class="fas fa-keyboard"></i></div>
+      <div class="ft">Keylogger Engine</div>
+      <div class="fd">Keystroke capture organised by app context. Every typed character, every source application, timestamped precisely.</div>
+      <div class="spark" id="sparkKey"></div>
+    </div>
+
+    <div class="fc rv d2">
+      <div class="fi fi-r"><i class="fas fa-camera"></i></div>
+      <div class="ft">Media &amp; Gallery</div>
+      <div class="fd">Browse, download and manage captured photos. Chronologically sorted with upload timestamps and full-screen lightbox.</div>
+      <div class="spark" id="sparkMedia"></div>
+    </div>
+
+    <div class="fc rv d3">
+      <div class="fi fi-b"><i class="fas fa-battery-three-quarters"></i></div>
+      <div class="ft">Device Status</div>
+      <div class="fd">Live battery level, charging state, WiFi, Bluetooth, GPS toggle, hotspot, ringer mode and Do Not Disturb — all real time.</div>
+      <div class="spark" id="sparkBat"></div>
+    </div>
+
+    <div class="fc rv d1">
+      <div class="fi fi-c"><i class="fas fa-chart-bar"></i></div>
+      <div class="ft">App Usage Stats</div>
+      <div class="fd">Daily per-app screen time ranked by usage. Identifies top applications and tracks trends across any date range.</div>
+      <div class="spark" id="sparkApp"></div>
+    </div>
+
+    <div class="fc rv d2">
+      <div class="fi fi-p"><i class="fas fa-clock"></i></div>
+      <div class="ft">Screen Time</div>
+      <div class="fd">Total daily screen-on time with configurable baselines. Colour-coded progress bars for healthy vs excessive thresholds.</div>
+      <div class="spark" id="sparkScreen"></div>
+    </div>
+
+    <div class="fc rv d3">
+      <div class="fi fi-g"><i class="fas fa-circle-dot"></i></div>
+      <div class="ft">Live Event Stream</div>
+      <div class="fd">Real-time event feed — app switches, screen on/off, call states, music playback — streamed as they happen.</div>
+      <div class="spark" id="sparkEvent"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section id="how">
+  <div class="how-inner">
+
+    <div class="rv-l">
+      <div class="sec-badge" style="margin-bottom:14px;"><i class="fas fa-diagram-project"></i> Architecture</div>
+      <h2 class="sec-h" style="margin-bottom:10px;">How the platform <span>operates</span></h2>
+      <p style="font-size:14px;color:var(--m2);line-height:1.7;margin-bottom:28px;max-width:400px;">
+        A lightweight Android agent streams structured events to the cloud in real time.
+        Your web dashboard subscribes to live changes — zero polling, pure push.
+      </p>
+      <div class="how-steps">
+        <div class="hw-step">
+          <div class="hw-n">01</div>
+          <div class="hw-body">
+            <h4>Agent Registration</h4>
+            <p>The Android module registers the device under your UID with hardware fingerprint, OS version and a real-time heartbeat.</p>
+          </div>
+        </div>
+        <div class="hw-step">
+          <div class="hw-n">02</div>
+          <div class="hw-body">
+            <h4>Event Collection</h4>
+            <p>Background services capture calls, SMS, location, keylogs, app usage and device state — written as structured events per module.</p>
+          </div>
+        </div>
+        <div class="hw-step">
+          <div class="hw-n">03</div>
+          <div class="hw-body">
+            <h4>Real-Time Sync</h4>
+            <p>The dashboard subscribes to live data listeners. Every change reflects in the UI within milliseconds — no delays, no polling.</p>
+          </div>
+        </div>
+        <div class="hw-step">
+          <div class="hw-n">04</div>
+          <div class="hw-body">
+            <h4>Presence &amp; Status</h4>
+            <p>Persistent connection tracking drives online/offline state. The agent reports live presence and timestamps its last disconnect.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Architecture diagram -->
+    <div class="flow-box rv-r">
+      <svg viewBox="0 0 440 480" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+        <defs>
+          <linearGradient id="fg1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00f0ff"/>
+            <stop offset="100%" stop-color="#7c3aed"/>
+          </linearGradient>
+          <linearGradient id="fg2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#7c3aed"/>
+            <stop offset="100%" stop-color="#ec4899"/>
+          </linearGradient>
+          <marker id="fa" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
+            <path d="M0,0 L7,3.5 L0,7 Z" fill="rgba(0,240,255,.6)"/>
+          </marker>
+          <filter id="fg">
+            <feGaussianBlur stdDeviation="2.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <rect width="440" height="480" fill="#07091a" rx="14"/>
+        <!-- subtle grid -->
+        <g opacity=".05" stroke="#9ba8d4">
+          <line x1="0" y1="120" x2="440" y2="120" stroke-width=".5"/>
+          <line x1="0" y1="240" x2="440" y2="240" stroke-width=".5"/>
+          <line x1="0" y1="360" x2="440" y2="360" stroke-width=".5"/>
+          <line x1="110" y1="0" x2="110" y2="480" stroke-width=".5"/>
+          <line x1="220" y1="0" x2="220" y2="480" stroke-width=".5"/>
+          <line x1="330" y1="0" x2="330" y2="480" stroke-width=".5"/>
+        </g>
+
+        <!-- ANDROID column -->
+        <rect x="14" y="30" width="120" height="420" rx="12" fill="rgba(0,240,255,.04)" stroke="rgba(0,240,255,.2)" stroke-width="1"/>
+        <text x="74" y="22" fill="#00f0ff" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle" letter-spacing="1.5">DEVICE</text>
+
+        <!-- Phone mockup -->
+        <rect x="34" y="46" width="80" height="140" rx="10" fill="#0c0f26" stroke="rgba(0,240,255,.25)" stroke-width="1"/>
+        <rect x="40" y="54" width="68" height="88" rx="5" fill="rgba(0,240,255,.04)"/>
+        <rect x="46" y="62" width="28" height="3" rx="1.5" fill="rgba(0,240,255,.5)"/>
+        <rect x="46" y="70" width="50" height="2" rx="1" fill="rgba(155,168,212,.25)"/>
+        <rect x="46" y="76" width="38" height="2" rx="1" fill="rgba(155,168,212,.2)"/>
+        <rect x="46" y="84" width="55" height="2" rx="1" fill="rgba(155,168,212,.2)"/>
+        <rect x="46" y="90" width="32" height="2" rx="1" fill="rgba(155,168,212,.15)"/>
+        <rect x="40" y="128" width="68" height="4" rx="2" fill="rgba(0,240,255,.12)"/>
+
+        <!-- module chips -->
+        <g>
+          <rect x="22" y="210" width="104" height="16" rx="5" fill="rgba(0,240,255,.07)" stroke="rgba(0,240,255,.18)" stroke-width=".7"/>
+          <text x="74" y="222" fill="#00f0ff" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">GPS · Calls · SMS</text>
+          <rect x="22" y="234" width="104" height="16" rx="5" fill="rgba(124,58,237,.07)" stroke="rgba(124,58,237,.18)" stroke-width=".7"/>
+          <text x="74" y="246" fill="#a78bfa" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">Keys · Apps</text>
+          <rect x="22" y="258" width="104" height="16" rx="5" fill="rgba(16,185,129,.06)" stroke="rgba(16,185,129,.18)" stroke-width=".7"/>
+          <text x="74" y="270" fill="#34d399" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">Battery · State</text>
+          <rect x="22" y="282" width="104" height="16" rx="5" fill="rgba(245,158,11,.06)" stroke="rgba(245,158,11,.18)" stroke-width=".7"/>
+          <text x="74" y="294" fill="#fbbf24" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">Media · Events</text>
+        </g>
+
+        <!-- Heartbeat -->
+        <rect x="22" y="330" width="104" height="36" rx="8" fill="rgba(0,240,255,.03)" stroke="rgba(0,240,255,.12)" stroke-width=".7"/>
+        <text x="74" y="346" fill="#00f0ff" font-size="8" font-family="IBM Plex Mono,monospace" text-anchor="middle">● Presence</text>
+        <polyline points="28,358 38,358 42,348 46,368 50,348 54,358 64,358 68,358 72,352 76,358 90,358 100,358" fill="none" stroke="#00f0ff" stroke-width="1.2" opacity=".5"/>
+
+        <!-- DATABASE column -->
+        <rect x="160" y="50" width="120" height="360" rx="12" fill="rgba(245,158,11,.04)" stroke="rgba(245,158,11,.3)" stroke-width="1.1"/>
+        <text x="220" y="42" fill="#f59e0b" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle" letter-spacing="1.5">DATABASE</text>
+
+        <!-- Flame -->
+        <path d="M210,68 C210,68 205,80 208,88 C208,88 213,78 218,86 C223,94 220,108 213,112 C222,112 232,102 232,92 C232,82 222,68 222,76 C222,76 220,68 216,66 Z" fill="#f59e0b" opacity=".6"/>
+
+        <!-- Storage indicators -->
+        <g font-size="9" font-family="DM Sans,sans-serif" fill="rgba(155,168,212,.55)">
+          <text x="172" y="128">Location history</text>
+          <text x="172" y="148">Call records</text>
+          <text x="172" y="168">Message logs</text>
+          <text x="172" y="188">Keystroke data</text>
+          <text x="172" y="208">Media files</text>
+          <text x="172" y="228">Device state</text>
+          <text x="172" y="248">App statistics</text>
+          <text x="172" y="268">Live events</text>
+          <text x="172" y="288">Presence info</text>
+        </g>
+
+        <!-- WEB column -->
+        <rect x="306" y="30" width="120" height="420" rx="12" fill="rgba(124,58,237,.04)" stroke="rgba(124,58,237,.25)" stroke-width="1.1"/>
+        <text x="366" y="22" fill="#a78bfa" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle" letter-spacing="1.5">WEB</text>
+
+        <!-- Browser -->
+        <rect x="320" y="48" width="92" height="60" rx="7" fill="#0c0f26" stroke="rgba(124,58,237,.25)" stroke-width=".8"/>
+        <rect x="326" y="54" width="24" height="5" rx="2" fill="rgba(239,68,68,.4)"/>
+        <rect x="354" y="54" width="52" height="5" rx="3" fill="rgba(155,168,212,.15)"/>
+        <rect x="326" y="64" width="80" height="2" rx="1" fill="rgba(124,58,237,.3)"/>
+        <rect x="326" y="70" width="60" height="2" rx="1" fill="rgba(155,168,212,.15)"/>
+        <rect x="326" y="76" width="72" height="2" rx="1" fill="rgba(155,168,212,.12)"/>
+        <rect x="326" y="92" width="80" height="5" rx="2" fill="rgba(0,240,255,.15)"/>
+
+        <!-- Listener chips -->
+        <g font-size="8" font-family="IBM Plex Mono,monospace">
+          <rect x="316" y="125" width="100" height="14" rx="4" fill="rgba(0,240,255,.07)" stroke="rgba(0,240,255,.18)" stroke-width=".6"/>
+          <text x="366" y="136" text-anchor="middle" fill="#00f0ff">Live GPS</text>
+          <rect x="316" y="147" width="100" height="14" rx="4" fill="rgba(0,240,255,.06)" stroke="rgba(0,240,255,.14)" stroke-width=".6"/>
+          <text x="366" y="158" text-anchor="middle" fill="#00f0ff">Calls / SMS</text>
+          <rect x="316" y="169" width="100" height="14" rx="4" fill="rgba(124,58,237,.06)" stroke="rgba(124,58,237,.14)" stroke-width=".6"/>
+          <text x="366" y="180" text-anchor="middle" fill="#a78bfa">Keylogs</text>
+          <rect x="316" y="191" width="100" height="14" rx="4" fill="rgba(124,58,237,.06)" stroke="rgba(124,58,237,.14)" stroke-width=".6"/>
+          <text x="366" y="202" text-anchor="middle" fill="#a78bfa">Battery</text>
+          <rect x="316" y="213" width="100" height="14" rx="4" fill="rgba(124,58,237,.06)" stroke="rgba(124,58,237,.14)" stroke-width=".6"/>
+          <text x="366" y="224" text-anchor="middle" fill="#a78bfa">App usage</text>
+          <rect x="316" y="235" width="100" height="14" rx="4" fill="rgba(16,185,129,.05)" stroke="rgba(16,185,129,.14)" stroke-width=".6"/>
+          <text x="366" y="246" text-anchor="middle" fill="#34d399">Presence</text>
+          <rect x="316" y="257" width="100" height="14" rx="4" fill="rgba(16,185,129,.05)" stroke="rgba(16,185,129,.14)" stroke-width=".6"/>
+          <text x="366" y="268" text-anchor="middle" fill="#34d399">Events</text>
+          <rect x="316" y="279" width="100" height="14" rx="4" fill="rgba(245,158,11,.05)" stroke="rgba(245,158,11,.14)" stroke-width=".6"/>
+          <text x="366" y="290" text-anchor="middle" fill="#fbbf24">Media</text>
+        </g>
+
+        <!-- Auth box -->
+        <rect x="316" y="320" width="100" height="112" rx="9" fill="rgba(0,240,255,.03)" stroke="rgba(0,240,255,.15)" stroke-width=".8"/>
+        <text x="366" y="340" fill="#00f0ff" font-size="8" font-family="IBM Plex Mono,monospace" text-anchor="middle">Secure Auth</text>
+        <text x="366" y="356" fill="rgba(155,168,212,.5)" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle">Email / Password</text>
+        <text x="366" y="372" fill="rgba(155,168,212,.5)" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle">JWT Sessions</text>
+        <text x="366" y="388" fill="rgba(155,168,212,.5)" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle">Rate Limiting</text>
+        <text x="366" y="404" fill="rgba(155,168,212,.5)" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle">UID Isolation</text>
+
+        <!-- Arrows Android → Database -->
+        <g opacity=".7">
+          <line x1="136" y1="218" x2="158" y2="218" stroke="url(#fg1)" stroke-width="1.3" marker-end="url(#fa)"/>
+          <line x1="136" y1="242" x2="158" y2="242" stroke="#a78bfa" stroke-width="1.3" marker-end="url(#fa)"/>
+          <line x1="136" y1="266" x2="158" y2="266" stroke="#34d399" stroke-width="1.3" marker-end="url(#fa)"/>
+          <line x1="136" y1="290" x2="158" y2="290" stroke="#fbbf24" stroke-width="1.3" marker-end="url(#fa)"/>
+          <line x1="136" y1="348" x2="158" y2="250" stroke="#00f0ff" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#fa)" opacity=".5"/>
+        </g>
+
+        <!-- Arrows Database → Web -->
+        <g opacity=".6">
+          <line x1="280" y1="190" x2="314" y2="190" stroke="url(#fg1)" stroke-width="1.3" marker-end="url(#fa)"/>
+          <line x1="280" y1="220" x2="314" y2="220" stroke="#a78bfa" stroke-width="1.3" marker-end="url(#fa)"/>
+          <line x1="280" y1="260" x2="314" y2="262" stroke="#34d399" stroke-width="1.3" marker-end="url(#fa)"/>
+          <line x1="280" y1="340" x2="314" y2="376" stroke="#00f0ff" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#fa)" opacity=".5"/>
+        </g>
+
+        <!-- Animated dots -->
+        <circle r="3.5" fill="#00f0ff" filter="url(#fg)" opacity=".9">
+          <animateMotion dur="1.8s" repeatCount="indefinite" path="M136,218 L158,218"/>
+        </circle>
+        <circle r="3.5" fill="#00f0ff" filter="url(#fg)" opacity=".9">
+          <animateMotion dur="2.2s" repeatCount="indefinite" path="M280,190 L314,190"/>
+        </circle>
+        <circle r="3" fill="#a78bfa" filter="url(#fg)" opacity=".9">
+          <animateMotion dur="2.6s" repeatCount="indefinite" path="M280,220 L314,220"/>
+        </circle>
+        <circle r="3" fill="#34d399" filter="url(#fg)" opacity=".9">
+          <animateMotion dur="3s" repeatCount="indefinite" path="M280,260 L314,262"/>
+        </circle>
+      </svg>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ PIPELINE ══ -->
+<section id="pipeline">
+  <div class="pipe-inner">
+    <div class="pipe-head">
+      <div class="sec-badge rv"><i class="fas fa-wave-square"></i> Data Flow</div>
+      <h2 class="sec-h rv d1">From device to dashboard<br><span>in milliseconds</span></h2>
+      <p class="sec-p rv d2">Each module streams structured events to the cloud. The dashboard subscribes — zero polling, pure push.</p>
+    </div>
+
+    <div class="pipe-stages rv d1">
+      <div class="ps">
+        <div class="ps-num">Stage 01</div>
+        <span class="ps-icon">📱</span>
+        <div class="ps-title" style="color:var(--c);">Device</div>
+        <div class="ps-items">
+          <div class="ps-item" style="color:var(--c);">GPS sensor</div>
+          <div class="ps-item" style="color:var(--c);">Call log</div>
+          <div class="ps-item" style="color:var(--c);">SMS observer</div>
+          <div class="ps-item" style="color:var(--c);">Keylogger</div>
+          <div class="ps-item" style="color:var(--c);">Camera/media</div>
+        </div>
+      </div>
+
+      <div class="pipe-arrow">
+        <svg viewBox="0 0 20 4" fill="none"><line x1="0" y1="2" x2="20" y2="2" stroke="rgba(0,240,255,.4)" stroke-width="1.5" marker-end="url(#pa)"/>
+          <defs><marker id="pa" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="rgba(0,240,255,.5)"/></marker></defs>
+        </svg>
+        <div class="arrow-dot"></div>
+      </div>
+
+      <div class="ps">
+        <div class="ps-num">Stage 02</div>
+        <span class="ps-icon">⚙️</span>
+        <div class="ps-title" style="color:#a78bfa;">Services</div>
+        <div class="ps-items">
+          <div class="ps-item" style="color:#a78bfa;">Background workers</div>
+          <div class="ps-item" style="color:#a78bfa;">Event formatters</div>
+          <div class="ps-item" style="color:#a78bfa;">Data batcher</div>
+          <div class="ps-item" style="color:#a78bfa;">Retry handler</div>
+          <div class="ps-item" style="color:#a78bfa;">Presence manager</div>
+        </div>
+      </div>
+
+      <div class="pipe-arrow">
+        <svg viewBox="0 0 20 4" fill="none"><line x1="0" y1="2" x2="20" y2="2" stroke="rgba(167,139,250,.4)" stroke-width="1.5" marker-end="url(#pa2)"/>
+          <defs><marker id="pa2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="rgba(167,139,250,.5)"/></marker></defs>
+        </svg>
+        <div class="arrow-dot" style="background:#a78bfa;animation-delay:.5s;"></div>
+      </div>
+
+      <div class="ps">
+        <div class="ps-num">Stage 03</div>
+        <span class="ps-icon">☁️</span>
+        <div class="ps-title" style="color:#fbbf24;">Cloud Store</div>
+        <div class="ps-items">
+          <div class="ps-item" style="color:#fbbf24;">Realtime database</div>
+          <div class="ps-item" style="color:#fbbf24;">Encrypted transit</div>
+          <div class="ps-item" style="color:#fbbf24;">Auth gating</div>
+          <div class="ps-item" style="color:#fbbf24;">User isolation</div>
+          <div class="ps-item" style="color:#fbbf24;">Data at rest encrypted</div>
+        </div>
+      </div>
+
+      <div class="pipe-arrow">
+        <svg viewBox="0 0 20 4" fill="none"><line x1="0" y1="2" x2="20" y2="2" stroke="rgba(251,191,36,.4)" stroke-width="1.5" marker-end="url(#pa3)"/>
+          <defs><marker id="pa3" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="rgba(251,191,36,.5)"/></marker></defs>
+        </svg>
+        <div class="arrow-dot" style="background:#fbbf24;animation-delay:1s;"></div>
+      </div>
+
+      <div class="ps">
+        <div class="ps-num">Stage 04</div>
+        <span class="ps-icon">👁️</span>
+        <div class="ps-title" style="color:#34d399;">Dashboard</div>
+        <div class="ps-items">
+          <div class="ps-item" style="color:#34d399;">Live map view</div>
+          <div class="ps-item" style="color:#34d399;">Call / SMS logs</div>
+          <div class="ps-item" style="color:#34d399;">App usage chart</div>
+          <div class="ps-item" style="color:#34d399;">Event stream</div>
+          <div class="ps-item" style="color:#34d399;">Media gallery</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lat-bar rv d2" style="margin-top:16px;">
+      <div class="lat-label">End-to-end latency</div>
+      <div class="lat-track"><div class="lat-fill"></div></div>
+      <div class="lat-val">&lt; 8ms</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECURITY ══ -->
+<section id="security">
+  <div class="sec-inner">
+
+    <div class="rv-l">
+      <div class="sec-badge" style="margin-bottom:14px;"><i class="fas fa-shield-halved"></i> Security</div>
+      <h2 class="sec-h" style="margin-bottom:10px;">Built secure <span>from ground up</span></h2>
+      <p style="font-size:14px;color:var(--m2);line-height:1.7;margin-bottom:24px;max-width:380px;">
+        Every layer is protected — auth gating, per-user data isolation, and end-to-end encryption.
+      </p>
+
+      <div class="radar-wrap">
+        <svg viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+          <defs>
+            <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00f0ff" stop-opacity=".2"/>
+              <stop offset="100%" stop-color="#7c3aed" stop-opacity=".1"/>
+            </linearGradient>
+          </defs>
+          <rect width="300" height="240" fill="#07091a" rx="0"/>
+          <g transform="translate(150,128)">
+            <circle r="94" fill="none" stroke="rgba(0,240,255,.07)" stroke-width="1"/>
+            <circle r="70" fill="none" stroke="rgba(0,240,255,.09)" stroke-width="1"/>
+            <circle r="47" fill="none" stroke="rgba(0,240,255,.11)" stroke-width="1"/>
+            <circle r="24" fill="none" stroke="rgba(0,240,255,.14)" stroke-width="1"/>
+            <line x1="0" y1="-94" x2="0" y2="94" stroke="rgba(0,240,255,.06)" stroke-width="1"/>
+            <line x1="-94" y1="0" x2="94" y2="0" stroke="rgba(0,240,255,.06)" stroke-width="1"/>
+            <line x1="-66.5" y1="-66.5" x2="66.5" y2="66.5" stroke="rgba(0,240,255,.06)" stroke-width="1"/>
+            <line x1="66.5" y1="-66.5" x2="-66.5" y2="66.5" stroke="rgba(0,240,255,.06)" stroke-width="1"/>
+
+            <!-- Rotating sweep line -->
+            <line x1="0" y1="0" x2="94" y2="0" stroke="rgba(0,240,255,.2)" stroke-width="1.2">
+              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="6s" repeatCount="indefinite"/>
+            </line>
+
+            <!-- Security polygon -->
+            <polygon
+              points="0,-84 72,-42 68,40 0,80 -68,40 -80,-46"
+              fill="url(#rg)" stroke="url(#fg1)" stroke-width="1.5" opacity=".85"/>
+
+            <!-- Points -->
+            <circle cx="0" cy="-84" r="4" fill="#00f0ff"/>
+            <circle cx="72" cy="-42" r="4" fill="#00f0ff"/>
+            <circle cx="68" cy="40" r="4" fill="#a78bfa"/>
+            <circle cx="0" cy="80" r="4" fill="#a78bfa"/>
+            <circle cx="-68" cy="40" r="4" fill="#34d399"/>
+            <circle cx="-80" cy="-46" r="4" fill="#34d399"/>
+
+            <text x="0" y="-99" fill="#00f0ff" font-size="9" font-family="DM Sans,sans-serif" text-anchor="middle">Auth</text>
+            <text x="86" y="-48" fill="#00f0ff" font-size="9" font-family="DM Sans,sans-serif" text-anchor="start">Encrypt</text>
+            <text x="76" y="56" fill="#a78bfa" font-size="9" font-family="DM Sans,sans-serif" text-anchor="start">Rate Limit</text>
+            <text x="0" y="110" fill="#a78bfa" font-size="9" font-family="DM Sans,sans-serif" text-anchor="middle">Isolation</text>
+            <text x="-80" y="56" fill="#34d399" font-size="9" font-family="DM Sans,sans-serif" text-anchor="end">Presence</text>
+            <text x="-94" y="-48" fill="#34d399" font-size="9" font-family="DM Sans,sans-serif" text-anchor="end">TLS</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="sec-cards rv-r">
+      <div class="sec-card">
+        <div class="sec-icon fi-c"><i class="fas fa-key"></i></div>
+        <h4>Secure Auth</h4>
+        <p>Email/password with JWT tokens. Session persistence and auth state gating on every page load.</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon fi-p"><i class="fas fa-database"></i></div>
+        <h4>Data Isolation</h4>
+        <p>All data scoped per user. Security rules prevent any cross-user data access at the database level.</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon fi-g"><i class="fas fa-shield"></i></div>
+        <h4>Rate Limiting</h4>
+        <p>Auth attempt limits per time window. Blocks brute-force on login, signup and password reset.</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon fi-o"><i class="fas fa-lock"></i></div>
+        <h4>Encrypted Transit</h4>
+        <p>All traffic over TLS. Data at rest encrypted. No plaintext credentials stored anywhere.</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon fi-r"><i class="fas fa-user-shield"></i></div>
+        <h4>Enum Prevention</h4>
+        <p>Password reset always returns a generic response — never confirms whether an email is registered.</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon fi-b"><i class="fas fa-code"></i></div>
+        <h4>XSS Safe</h4>
+        <p>All dynamic content uses safe DOM APIs. Error codes mapped to safe user-facing strings.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section id="cta">
+  <div class="cta-inner rv">
+    <div class="sec-badge" style="margin:0 auto 16px;display:inline-flex;"><i class="fas fa-rocket"></i> Get Started</div>
+    <h2 class="cta-h">Ready for <span>full visibility</span>?</h2>
+    <p class="cta-p">Sign in or create an account above to access your Spyder dashboard and begin monitoring your first device.</p>
+    <a href="#hero" class="cta-btn">
+      <i class="fas fa-arrow-up"></i> Open Dashboard
+    </a>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <h2>Spyder</h2>
+      <p>Intelligent device intelligence platform. Real-time monitoring, encrypted data, zero blind spots.</p>
+    </div>
+
+    <div>
+      <div class="fc-h">Platform</div>
+      <ul class="fc-l">
+        <li><a href="#features">Modules</a></li>
+        <li><a href="#how">Architecture</a></li>
+        <li><a href="#pipeline">Data Flow</a></li>
+        <li><a href="#security">Security</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="fc-h">Modules</div>
+      <ul class="fc-l">
+        <li><a href="#">GPS Tracking</a></li>
+        <li><a href="#">Call Monitor</a></li>
+        <li><a href="#">SMS Logger</a></li>
+        <li><a href="#">Keylogger</a></li>
+        <li><a href="#">Media Access</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="fc-h">Stack</div>
+      <ul class="fc-l">
+        <li><a href="#">Realtime Database</a></li>
+        <li><a href="#">Secure Auth</a></li>
+        <li><a href="#">Android Agent</a></li>
+        <li><a href="#">Web Dashboard</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot-bottom">
+    <span>© 2026 Spyder Intelligence Platform</span>
+    <div class="foot-badges">
+      <span class="fbadge"><i class="fas fa-shield-halved"></i> Secured</span>
+      <span class="fbadge"><i class="fas fa-lock"></i> Encrypted</span>
+      <span class="fbadge"><i class="fas fa-circle-check"></i> Live Data</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script>
+
+/* ── Particles ── */
+(function(){
+  const c = document.getElementById('particles-canvas');
+  const ctx = c.getContext('2d');
+  let pts = [], W, H;
+
+  function resize(){ W=c.width=innerWidth; H=c.height=innerHeight; }
+  resize(); window.addEventListener('resize',resize,{passive:true});
+
+  for(let i=0;i<55;i++){
+    pts.push({
+      x:Math.random()*1920, y:Math.random()*1080,
+      vx:(Math.random()-.5)*.28, vy:(Math.random()-.5)*.28,
+      r:Math.random()*1.8+.4,
+      op:Math.random()*.5+.1
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,240,255,${p.op})`;
+      ctx.fill();
+    });
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x,pts[i].y);
+          ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle=`rgba(0,240,255,${.06*(1-d/120)})`;
+          ctx.lineWidth=.6;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── Nav ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
+
+/* ── Hamburger ── */
+const ham = document.getElementById('ham');
+const mob = document.getElementById('mobMenu');
+ham.addEventListener('click',()=>{
+  mob.classList.toggle('open');
+  ham.querySelector('i').className = mob.classList.contains('open')?'fas fa-times':'fas fa-bars';
+});
+function closeMob(){mob.classList.remove('open');ham.querySelector('i').className='fas fa-bars';}
+
+/* ── Scroll reveal ── */
+const rv = new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');rv.unobserve(e.target);}});
+},{threshold:.1});
+document.querySelectorAll('.rv,.rv-l,.rv-r').forEach(el=>rv.observe(el));
+
+/* ── Spark charts ── */
+const sparkIds = ['sparkGps','sparkCall','sparkSms','sparkKey','sparkMedia','sparkBat','sparkApp','sparkScreen','sparkEvent'];
+const sparkColors = ['#00f0ff','#a78bfa','#34d399','#fbbf24','#f87171','#60a5fa','#00f0ff','#a78bfa','#34d399'];
+sparkIds.forEach((id,i)=>{
+  const el = document.getElementById(id);
+  if(!el)return;
+  for(let j=0;j<10;j++){
+    const b = document.createElement('div');
+    b.className = 'spark-b';
+    b.style.height = (Math.random()*70+15)+'%';
+    b.style.background = sparkColors[i];
+    b.style.opacity = '.35';
+    el.appendChild(b);
+  }
+});
+
+/* ── Notification ── */
+function showNotif(msg,type='info'){
+  document.querySelectorAll('.notif').forEach(n=>n.remove());
+  const n=document.createElement('div');
+  n.className=`notif notif--${type}`;
+  const i=document.createElement('i');
+  i.className=`fas ${type==='success'?'fa-check-circle':'fa-exclamation-circle'}`;
+  const t=document.createElement('span');
+  t.textContent=msg;
+  const b=document.createElement('button');
+  b.textContent='×';b.onclick=()=>n.remove();
+  n.append(i,t,b);
+  document.body.appendChild(n);
+  setTimeout(()=>n?.remove(),5000);
+}
+
+/* ── Rate limit ── */
+const _att={};
+function isRL(key){
+  const now=Date.now(),win=600000,max=5;
+  if(!_att[key])_att[key]=[];
+  _att[key]=_att[key].filter(t=>now-t<win);
+  if(_att[key].length>=max){
+    const w=Math.ceil((win-(now-_att[key][0]))/60000);
+    showNotif(`Too many attempts. Try again in ${w} min${w>1?'s':''}.`,'error');
+    return true;
+  }
+  _att[key].push(now);return false;
+}
+
+/* ── Validators ── */
+const ER=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+function vEmail(e){if(!e)return'Email required.';if(!ER.test(e))return'Enter a valid email.';return null;}
+function vPass(p){if(!p)return'Password required.';if(p.length<6)return'Min 6 characters.';return null;}
+function vStr(p){if(!/[A-Z]/.test(p))return'Need at least one uppercase letter.';if(!/[0-9]/.test(p))return'Need at least one number.';return null;}
+function authErr(code){
+  const m={'auth/user-not-found':'No account with this email.','auth/wrong-password':'Incorrect password.','auth/invalid-credential':'Invalid email or password.','auth/email-already-in-use':'Account already exists.','auth/weak-password':'Password too weak.','auth/too-many-requests':'Too many failed attempts. Try later.','auth/network-request-failed':'Network error.','default':'Something went wrong.'};
+  return m[code]||m['default'];
+}
+
+/* ── Form switch ── */
+function showLI(){switchF('lf',['sf','ff']);}
+function showSU(){switchF('sf',['lf','ff']);}
+function showFP(){switchF('ff',['lf','sf']);}
+function switchF(active,hides){
+  hides.forEach(f=>document.getElementById(f).classList.remove('active'));
+  document.getElementById(active).classList.add('active');
+}
+
+/* ── Toggle pw ── */
+window.togglePw=(id,btnId)=>{
+  const inp=document.getElementById(id),btn=document.getElementById(btnId);
+  if(!inp||!btn)return;
+  const h=inp.type==='password';
+  inp.type=h?'text':'password';
+  btn.classList.toggle('fa-eye-slash',!h);
+  btn.classList.toggle('fa-eye',h);
+};
+
+/* ── Enter key ── */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const a=document.querySelector('.form.active');
+    if(!a)return;
+    const b=a.querySelector('.auth-btn:not(.loading)');
+    if(b)b.click();
+  }
+});
+
+/* ── Remember me ── */
+window.addEventListener('load',()=>{
+  if(localStorage.getItem('rm')==='1'){
+    const s=localStorage.getItem('re');
+    if(s&&ER.test(s)){document.getElementById('le').value=s;document.getElementById('rm').checked=true;}
+    else{localStorage.removeItem('re');localStorage.removeItem('rm');}
+  }
+});
+</script>
+
+<!-- Database module -->
+<script type="module">
+import { auth } from "./js/api/firebase.js";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+onAuthStateChanged(auth, u=>{ if(u) window.location.href='dashboard.html'; });
+
+const lBtn=document.getElementById('loginBtn');
+const sBtn=document.getElementById('signupBtn');
+const fBtn=document.getElementById('forgotBtn');
+const rm=document.getElementById('rm');
+
+window.doLogin=async()=>{
+  const em=document.getElementById('le').value.trim().toLowerCase();
+  const pw=document.getElementById('lp').value;
+  const ee=vEmail(em); if(ee){showNotif(ee,'error');return;}
+  const pe=vPass(pw);  if(pe){showNotif(pe,'error');return;}
+  if(isRL(`li:${em}`))return;
+  if(rm.checked){localStorage.setItem('re',em);localStorage.setItem('rm','1');}
+  else{localStorage.removeItem('re');localStorage.removeItem('rm');}
+  lBtn.classList.add('loading');
+  try{
+    await signInWithEmailAndPassword(auth,em,pw);
+    window.location.href='dashboard.html';
+  }catch(err){showNotif(authErr(err.code),'error');}
+  finally{lBtn.classList.remove('loading');}
+};
+
+window.doSignup=async()=>{
+  const em=document.getElementById('se').value.trim().toLowerCase();
+  const pw=document.getElementById('sp').value;
+  const co=document.getElementById('sc').value;
+  const ee=vEmail(em); if(ee){showNotif(ee,'error');return;}
+  const pe=vPass(pw);  if(pe){showNotif(pe,'error');return;}
+  const se=vStr(pw);   if(se){showNotif(se,'error');return;}
+  if(pw!==co){showNotif('Passwords do not match.','error');return;}
+  if(isRL(`su:${em}`))return;
+  sBtn.classList.add('loading');
+  try{
+    await createUserWithEmailAndPassword(auth,em,pw);
+    showNotif('Account created! You can now sign in.','success');
+    showLI();
+  }catch(err){showNotif(authErr(err.code),'error');}
+  finally{sBtn.classList.remove('loading');}
+};
+
+window.doForgot=async()=>{
+  const em=document.getElementById('fe').value.trim().toLowerCase();
+  const ee=vEmail(em); if(ee){showNotif(ee,'error');return;}
+  if(isRL(`fp:${em}`))return;
+  fBtn.classList.add('loading');
+  try{
+    await sendPasswordResetEmail(auth,em);
+    showNotif('If registered, a reset link has been sent.','success');
+  }catch(err){
+    if(err.code==='auth/user-not-found')showNotif('If registered, a reset link has been sent.','success');
+    else showNotif(authErr(err.code),'error');
+  }
+  finally{fBtn.classList.remove('loading');}
+};
+</script>
+
+</body>
+</html>
+
+
+
+
+
