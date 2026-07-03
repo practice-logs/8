@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SMS Messages</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+ 
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     ROOT — embeds inside dashboard main content
+════════════════════════════════════════════ -->
+<div class="sms-root" id="smsRoot">
+
+  <!-- LEFT: Conversation list -->
+  <div class="sms-left" id="smsLeft">
+
+    <!-- Header -->
+    <div class="sms-left-hdr">
+      <div class="sms-brand-row">
+        <div class="sms-brand">
+          <div class="sms-brand-icon"><i class="fa-solid fa-comment-sms"></i></div>
+          <span class="sms-brand-name">Messages</span>
+        </div>
+        <div class="sms-live connecting" id="smsLive">
+          <div class="sms-live-dot"></div>
+          <span id="smsLiveText">Connecting</span>
+        </div>
+      </div>
+
+      <div class="sms-sync-row">
+        <div class="sms-stoggle" onclick="smsTglSync('sms')">
+          <i class="fa-solid fa-comment-sms sms-stoggle-icon"></i>
+          <span class="sms-stoggle-label">SMS Sync</span>
+          <div class="sms-ts-track on" id="smsSyncTrack"><div class="sms-ts-thumb"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="sms-search">
+      <div class="sms-search-wrap">
+        <i class="fa-solid fa-magnifying-glass sms-search-icon"></i>
+        <input class="sms-search-input" id="smsSearch" type="text" placeholder="Search conversations…">
+      </div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="sms-filters" id="smsFilters">
+      <button class="sms-ftab active" data-f="all">All</button>
+      <button class="sms-ftab" data-f="unread">Unread</button>
+      <button class="sms-ftab" data-f="inbox">Inbox</button>
+      <button class="sms-ftab" data-f="sent">Sent</button>
+    </div>
+
+    <!-- Multi-select toolbar (conversations) -->
+    <div class="sms-sel-bar" id="smsConvSelBar">
+      <span class="sms-sel-count" id="smsConvSelCount">0 selected</span>
+      <button class="sms-sel-btn sel-all" onclick="smsConvSelAll()">All</button>
+      <button class="sms-sel-btn del-sel" onclick="smsConvDelSelected()"><i class="fa-solid fa-trash-can"></i> Delete</button>
+      <button class="sms-sel-btn cancel" onclick="smsConvExitSelect()">✕</button>
+    </div>
+
+    <!-- Conversation list -->
+    <div class="sms-conv-list" id="smsConvList">
+      <div class="sms-conv-empty">
+        <i class="fa-regular fa-comment-dots"></i>
+        Loading messages…
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Chat -->
+  <div class="sms-right" id="smsRight">
+
+    <!-- Empty state -->
+    <div class="sms-chat-empty" id="smsChatEmpty">
+      <div class="sms-chat-empty-icon"><i class="fa-regular fa-comments"></i></div>
+      <p>Select a conversation</p>
+      <small>Messages appear here in real-time</small>
+    </div>
+
+    <!-- Active chat -->
+    <div id="smsChatContent" style="display:none;flex-direction:column;height:100%;min-height:0;">
+
+      <!-- Header -->
+      <div class="sms-chat-hdr">
+        <button class="sms-back-btn sms-icon-btn" onclick="smsGoBack()">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <div class="sms-hdr-av" id="smsChatAv"></div>
+        <div class="sms-hdr-info">
+          <div class="sms-hdr-name" id="smsChatName"></div>
+          <div class="sms-hdr-num"  id="smsChatNum"></div>
+        </div>
+        <div class="sms-hdr-actions">
+          <button class="sms-icon-btn select" title="Select messages" onclick="smsMsgEnterSelect()">
+            <i class="fa-regular fa-square-check"></i>
+          </button>
+          <button class="sms-icon-btn read" title="Mark all read" onclick="smsMarkAllRead()">
+            <i class="fa-solid fa-envelope-open"></i>
+          </button>
+          <button class="sms-icon-btn del" title="Delete conversation" onclick="smsPromptDelConv()">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Message selection bar -->
+      <div class="sms-msg-sel-bar" id="smsMsgSelBar">
+        <span class="sms-msg-sel-count" id="smsMsgSelCount">0 selected</span>
+        <button class="sms-msg-sel-btn cancel" onclick="smsMsgExitSelect()">✕ Cancel</button>
+        <button class="sms-msg-sel-btn del" onclick="smsMsgDelSelected()">
+          <i class="fa-solid fa-trash-can"></i> Delete Selected
+        </button>
+      </div>
+
+      <!-- Messages -->
+      <div class="sms-chat-msgs" id="smsChatMsgs"></div>
+
+      <!-- Compose -->
+      <div class="sms-compose">
+        <div class="sms-compose-wrap">
+          <textarea
+            class="sms-compose-ta"
+            id="smsTA"
+            placeholder="Type a message…"
+            rows="1"
+            oninput="smsOnCompose(this)"
+            onkeydown="smsOnKey(event)"
+          ></textarea>
+          <span class="sms-char-count" id="smsCharCount"></span>
+        </div>
+        <button class="sms-send-btn" id="smsSendBtn" disabled onclick="smsSend()">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm dialog -->
+<div class="sms-overlay" id="smsOverlay">
+  <div class="sms-dialog">
+    <div class="sms-dialog-title" id="smsDialogTitle">Confirm</div>
+    <div class="sms-dialog-msg"   id="smsDialogMsg"></div>
+    <div class="sms-dialog-btns">
+      <button class="sms-dialog-btn cancel"  onclick="smsCloseDialog(false)">Cancel</button>
+      <button class="sms-dialog-btn confirm" id="smsDialogOk">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="sms-toast" id="smsToast">
+  <i id="smsToastIcon" class="fa-solid fa-circle-check"></i>
+  <span id="smsToastMsg"></span>
+</div>
+
+
+</body>
+</html>

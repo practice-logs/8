@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Gallery | Monitor Elite</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+</style>
+</head>
+<body>
+
+<!-- GALLERY -->
+<div id="galleryDiv">
+  <div id="topBar">
+    <div class="nav-left">
+      <i class="fa-solid fa-photo-film"></i>
+      <span>Media Gallery</span>
+    </div>
+
+    <div class="nav-right">
+      <div id="mediaCount">
+        <i class="fa-solid fa-images"></i>
+        <span id="countText">0 items</span>
+      </div>
+
+      <!-- FILTER SELECT -->
+      <select id="filterSelect">
+        <option value="all">All Media</option>
+        <option value="camera">Camera</option>
+        <option value="screenshot">Screenshots</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="gallery-container">
+    <div id="gallery"></div>
+    <div id="status"></div>
+  </div>
+</div>
+
+<!-- FULLSCREEN MODAL -->
+<div id="imageModal">
+  <span id="prev" class="nav"><i class="fa-solid fa-chevron-left"></i></span>
+  <span id="next" class="nav"><i class="fa-solid fa-chevron-right"></i></span>
+
+  <div class="modal-ui">
+    <button id="downloadBtn" title="Download"><i class="fa-solid fa-download"></i></button>
+    <button id="deleteBtn" title="Delete"><i class="fa-solid fa-trash"></i></button>
+    <button id="closeBtn" title="Close"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+
+  <div id="imageIndex"><span>1</span> / <span>0</span></div>
+
+  <img id="modalImg">
+</div>
+
+<script type="module">
+
+</script>
+</body>
+</html>

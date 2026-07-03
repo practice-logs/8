@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StatsModule · Device Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1749863107862688"
+     crossorigin="anonymous"></script>
+
+<style>
+
+</style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<header class="hdr">
+  <div class="hdr-l">
+    <div class="logo-stat">
+      <svg viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="7" width="3" height="7" rx="1" fill="white" opacity=".55"/>
+        <rect x="6" y="4" width="3" height="10" rx="1" fill="white" opacity=".78"/>
+        <rect x="11" y="1" width="3" height="13" rx="1" fill="white"/>
+      </svg>
+    </div>
+    <div class="hdr-info">
+      <div class="hdr-title">StatsModule · Device Analytics</div>
+      <div class="hdr-sub" id="deviceMeta">Authenticating…</div>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <div class="pickup-badge">
+      <div class="pickup-ico">
+        <svg viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="white" stroke-width="1.2"/><polyline points="5,2.5 5,5 6.5,6.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div class="pickup-lbl">First pick-up</div>
+        <div class="pickup-val" id="pickupVal">—</div>
+      </div>
+    </div>
+    <div class="date-sel-wrap">
+      <span class="date-lbl">Date:</span>
+      <select class="date-sel" id="dateSel"><option value="">— select —</option></select>
+    </div>
+    <div class="auth-pill">
+      <div class="auth-dot spin" id="authDot"></div>
+      <span id="authLabel">signing in…</span>
+    </div>
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      <span>Live</span>
+    </div>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="3.5" stroke="currentColor" stroke-width="1.4"/>
+        <line x1="8" y1="1" x2="8" y2="2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="8" y1="13.5" x2="8" y2="15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="1" y1="8" x2="2.5" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="13.5" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="3.1" y1="3.1" x2="4.1" y2="4.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="11.9" y1="11.9" x2="12.9" y2="12.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 16 16" fill="none">
+        <path d="M13.5 10.5A6 6 0 015.5 2.5a6 6 0 108 8z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- ══════════ PAGE ══════════ -->
+<main class="page">
+
+  <!-- Banner -->
+  <div class="banner warn" id="banner">
+    <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/><line x1="8" y1="5" x2="8" y2="8.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="11" r=".7" fill="currentColor"/></svg>
+    <span id="bannerMsg">Connecting to Firebase…</span>
+  </div>
+
+  <!-- KPI Row -->
+  <div class="krow">
+    <div class="kcard" data-d="0">
+      <div class="kcard-stripe" style="background:var(--blue)"></div>
+      <div class="klbl">Screen time</div>
+      <div class="kval" id="k-screen">—</div>
+      <div class="ksub">totalScreenTimeMs</div>
+      <span class="kdelta" style="background:var(--tealT);color:var(--teal)" id="k-screen-d">▲ vs yesterday</span>
+    </div>
+    <div class="kcard" data-d="60">
+      <div class="kcard-stripe" style="background:var(--teal)"></div>
+      <div class="klbl">Unlocks</div>
+      <div class="kval" id="k-unlocks">—</div>
+      <div class="ksub">KEYGUARD_HIDDEN</div>
+      <span class="kdelta" style="background:var(--blueT);color:var(--blue)" id="k-unlocks-d">Peak —</span>
+    </div>
+    <div class="kcard" data-d="120">
+      <div class="kcard-stripe" style="background:var(--purple)"></div>
+      <div class="klbl">Avg session</div>
+      <div class="kval" id="k-session">—</div>
+      <div class="ksub">screenTime ÷ unlocks</div>
+      <span class="kdelta" style="background:var(--purpleT);color:var(--purple)">per unlock</span>
+    </div>
+    <div class="kcard" data-d="180">
+      <div class="kcard-stripe" style="background:var(--amber)"></div>
+      <div class="klbl">Battery drain</div>
+      <div class="kval" id="k-battery">—</div>
+      <div class="ksub" id="k-battery-sub">start → now</div>
+      <span class="kdelta" style="background:var(--amberT);color:var(--amber)" id="k-battery-d">Temp — · —</span>
+    </div>
+    <div class="kcard" data-d="240">
+      <div class="kcard-stripe" style="background:var(--red)"></div>
+      <div class="klbl">Total calls</div>
+      <div class="kval" id="k-calls">—</div>
+      <div class="ksub">READ_CALL_LOG · today</div>
+      <span class="kdelta" style="background:var(--redT);color:var(--red)" id="k-calls-d">— missed · — out</span>
+    </div>
+    <div class="kcard" data-d="300">
+      <div class="kcard-stripe" style="background:var(--pink)"></div>
+      <div class="klbl">SMS messages</div>
+      <div class="kval" id="k-sms">—</div>
+      <div class="ksub">Telephony.Sms · today</div>
+      <span class="kdelta" style="background:var(--pinkT);color:var(--pink)" id="k-sms-d">— recv · — sent</span>
+    </div>
+  </div>
+
+  <!-- Row 1: Hourly heat + side stack -->
+  <div class="grid-2-1">
+    <!-- Hourly heat grid -->
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-ttl">Hourly activity</span>
+        <span class="card-tag">MOVE_TO_FOREGROUND · KEYGUARD events</span>
+      </div>
+      <div style="display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2)"><span style="width:8px;height:8px;border-radius:2px;background:var(--blue);display:inline-block"></span>App opens</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2)"><span style="width:8px;height:8px;border-radius:2px;background:var(--teal);display:inline-block"></span>Unlocks</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2)"><span style="width:8px;height:8px;border-radius:2px;background:var(--amber);display:inline-block"></span>Screen-on min</div>
+      </div>
+      <div style="font-size:9px;color:var(--t3);font-family:var(--mono);margin-bottom:4px;">App opens</div>
+      <div class="hour-grid" id="hg-opens"></div>
+      <div style="font-size:9px;color:var(--t3);font-family:var(--mono);margin:10px 0 4px;">Unlocks</div>
+      <div class="hour-grid" id="hg-unlocks"></div>
+      <div style="font-size:9px;color:var(--t3);font-family:var(--mono);margin:10px 0 4px;">Screen-on (min)</div>
+      <div class="hour-grid" id="hg-screen"></div>
+      <div class="hour-label-row" id="hg-labels"></div>
+      <div style="display:flex;gap:20px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap;">
+        <div><div style="font-size:9px;color:var(--t3);margin-bottom:2px;">Peak hour</div><div style="font-size:13px;font-weight:600;color:var(--t1);font-family:var(--mono)" id="h-peak">—</div></div>
+        <div><div style="font-size:9px;color:var(--t3);margin-bottom:2px;">Peak opens</div><div style="font-size:13px;font-weight:600;color:var(--blue);font-family:var(--mono)" id="h-peak-opens">—</div></div>
+        <div><div style="font-size:9px;color:var(--t3);margin-bottom:2px;">Peak unlocks</div><div style="font-size:13px;font-weight:600;color:var(--teal);font-family:var(--mono)" id="h-peak-unlocks">—</div></div>
+        <div><div style="font-size:9px;color:var(--t3);margin-bottom:2px;">Peak screen-on</div><div style="font-size:13px;font-weight:600;color:var(--amber);font-family:var(--mono)" id="h-peak-screen">—</div></div>
+      </div>
+    </div>
+
+    <div class="side-stack">
+      <!-- Category split -->
+      <div class="card">
+        <div class="card-hd">
+          <span class="card-ttl">Category split</span>
+          <span class="card-tag">by usageMs</span>
+        </div>
+        <div class="info-box">
+          <div class="info-box-val" id="cat-total">—</div>
+          <div class="info-box-lbl">Total screen time today</div>
+        </div>
+        <div id="catList"></div>
+      </div>
+      <!-- Call breakdown -->
+      <div class="card">
+        <div class="card-hd">
+          <span class="card-ttl">Call breakdown</span>
+          <span class="card-tag">CallLog.Calls</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;">
+          <div style="background:var(--blueT);border:1px solid rgba(61,135,240,.2);border-radius:8px;padding:10px 6px;text-align:center;">
+            <div style="font-size:9px;color:var(--blue);margin-bottom:3px;">Incoming</div>
+            <div style="font-size:24px;font-weight:700;font-family:var(--mono);color:var(--blue);line-height:1" id="call-in">—</div>
+          </div>
+          <div style="background:var(--tealT);border:1px solid rgba(15,184,130,.2);border-radius:8px;padding:10px 6px;text-align:center;">
+            <div style="font-size:9px;color:var(--teal);margin-bottom:3px;">Outgoing</div>
+            <div style="font-size:24px;font-weight:700;font-family:var(--mono);color:var(--teal);line-height:1" id="call-out">—</div>
+          </div>
+          <div style="background:var(--redT);border:1px solid rgba(232,79,79,.2);border-radius:8px;padding:10px 6px;text-align:center;">
+            <div style="font-size:9px;color:var(--red);margin-bottom:3px;">Missed</div>
+            <div style="font-size:24px;font-weight:700;font-family:var(--mono);color:var(--red);line-height:1" id="call-miss">—</div>
+          </div>
+        </div>
+        <div class="sr"><span class="sl">Total duration</span><span class="sv" id="call-dur">—</span></div>
+        <div class="sr"><span class="sl">Avg per call</span><span class="sv" id="call-avg">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: 4 columns -->
+  <div class="grid-4">
+
+    <!-- Top apps -->
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-ttl">Top apps · usageMs</span>
+        <span class="card-tag">sorted · getLaunchIntent</span>
+      </div>
+      <div id="appList"><div style="color:var(--t3);font-size:11px;padding:10px 0">Waiting for data…</div></div>
+    </div>
+
+    <!-- Data usage -->
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-ttl">Data usage · TrafficStats</span>
+        <span class="card-tag">rx + tx · since reboot</span>
+      </div>
+      <div id="duList"><div style="color:var(--t3);font-size:11px;padding:10px 0">Waiting for data…</div></div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+        <div class="sr"><span class="sl">Total download</span><span class="sv" id="du-rx">—</span></div>
+        <div class="sr"><span class="sl">Total upload</span><span class="sv" id="du-tx">—</span></div>
+        <div class="sr"><span class="sl">Combined</span><span class="sv" id="du-total">—</span></div>
+      </div>
+    </div>
+
+    <!-- Battery -->
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-ttl">Battery · BatteryManager</span>
+        <span class="card-tag">0 permissions · sticky</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-bottom:4px;">
+        <span id="bat-bar-l">Start —%</span><span id="bat-bar-r">Now —%</span>
+      </div>
+      <div class="bat-segs" id="batSegs">
+        <div class="bat-s" style="background:var(--teal);flex:60"></div>
+        <div class="bat-s" style="background:var(--red);flex:0"></div>
+        <div class="bat-s" style="background:var(--bg4);flex:40"></div>
+      </div>
+      <div style="display:flex;gap:8px;font-size:9px;color:var(--t3);margin-bottom:14px;">
+        <span style="display:flex;align-items:center;gap:3px;"><span style="width:7px;height:7px;background:var(--teal);border-radius:2px;display:inline-block;"></span>Remaining</span>
+        <span style="display:flex;align-items:center;gap:3px;"><span style="width:7px;height:7px;background:var(--red);border-radius:2px;display:inline-block;"></span>Drained</span>
+      </div>
+      <div style="font-size:42px;font-weight:700;font-family:var(--mono);color:var(--t1);line-height:1;margin-bottom:2px;" id="bat-level-big">—%</div>
+      <div style="font-size:10px;color:var(--t3);margin-bottom:12px;">battery remaining</div>
+      <div class="prog-row" style="margin-bottom:4px;">
+        <span class="prog-label" style="font-size:9px;color:var(--teal);min-width:55px;">Remaining</span>
+        <div class="prog-track"><div class="prog-fill" id="bat-prog-rem" style="background:var(--teal)"></div></div>
+      </div>
+      <div class="prog-row" style="margin-bottom:12px;">
+        <span class="prog-label" style="font-size:9px;color:var(--red);min-width:55px;">Drained</span>
+        <div class="prog-track"><div class="prog-fill" id="bat-prog-drn" style="background:var(--red)"></div></div>
+      </div>
+      <div class="sr"><span class="sl">Start level</span><span class="sv" id="bat-start">—</span></div>
+      <div class="sr"><span class="sl">Drain today</span><span class="sv" id="bat-drain" style="color:var(--amber)">—</span></div>
+      <div class="sr"><span class="sl">Status</span><span class="sv"><span class="badge b-green" id="bat-status">—</span></span></div>
+      <div class="sr"><span class="sl">Temperature</span><span class="sv" id="bat-temp">—</span></div>
+      <div class="sr"><span class="sl">Health</span><span class="sv"><span class="badge b-green" id="bat-health">—</span></span></div>
+      <div class="sr"><span class="sl">Device</span><span class="sv" id="bat-device">—</span></div>
+      <div class="sr"><span class="sl">RAM / SDK</span><span class="sv" id="bat-ram">—</span></div>
+    </div>
+
+    <!-- Calls & SMS -->
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-ttl">Calls &amp; SMS</span>
+        <span class="card-tag">READ_CALL_LOG · READ_SMS</span>
+      </div>
+      <div class="call-mini-grid">
+        <div class="call-mini">
+          <div class="call-mini-lbl">Incoming</div>
+          <div class="call-mini-val" style="color:var(--blue)" id="cs-in">—</div>
+          <div class="call-mini-hint">INCOMING_TYPE</div>
+        </div>
+        <div class="call-mini">
+          <div class="call-mini-lbl">Outgoing</div>
+          <div class="call-mini-val" style="color:var(--teal)" id="cs-out">—</div>
+          <div class="call-mini-hint">OUTGOING_TYPE</div>
+        </div>
+        <div class="call-mini">
+          <div class="call-mini-lbl">Missed</div>
+          <div class="call-mini-val" style="color:var(--red)" id="cs-miss">—</div>
+          <div class="call-mini-hint">MISSED_TYPE</div>
+        </div>
+        <div class="call-mini">
+          <div class="call-mini-lbl">Duration</div>
+          <div class="call-mini-val" style="color:var(--t1);font-size:16px" id="cs-dur">—</div>
+          <div class="call-mini-hint">totalDurationSec</div>
+        </div>
+      </div>
+      <div class="sr"><span class="sl">SMS received</span><span class="sv" id="cs-sms-recv">—</span></div>
+      <div class="sr"><span class="sl">SMS sent</span><span class="sv" id="cs-sms-sent">—</span></div>
+      <div class="sr"><span class="sl">Drafts</span><span class="sv" id="cs-sms-draft">—</span></div>
+      <div class="sr"><span class="sl">Apps used today</span><span class="sv" id="cs-apps">—</span></div>
+      <div class="sr"><span class="sl">Top 3 apps</span><span class="sv" style="font-size:9px" id="cs-top3">—</span></div>
+    </div>
+
+  </div>
+
+  <!-- Row 3: 7-day + Timeline -->
+  <div class="grid-week">
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-ttl">7-day screen time</span>
+        <span class="card-tag">stat/{date}/totalScreenTimeMs</span>
+      </div>
+      <table class="week-table">
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Date</th>
+            <th>Screen</th>
+            <th>Bar</th>
+            <th>Unlocks</th>
+            <th>Avg session</th>
+          </tr>
+        </thead>
+        <tbody id="weekTbody">
+          <tr><td colspan="6" style="color:var(--t3);text-align:center;padding:20px 0;">Waiting for data…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-ttl">Day timeline</span>
+        <span class="card-tag" id="tl-date">—</span>
+      </div>
+      <div class="tl-outer">
+        <div class="tl-line"></div>
+        <div id="timelineEl"><div style="color:var(--t3);font-size:11px;padding:10px 0">Waiting for data…</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══════════ SCRIPT ══════════ -->
+<script type="module">
+
+</script>
+</body>
+</html>

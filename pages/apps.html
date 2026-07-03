@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apps - Professional Dark Mode Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+   
+  </style>
+</head>
+<body>
+  <section class="apps-container">
+    <div class="apps-header">
+      <div class="apps-title-section">
+        <div class="apps-icon"><i class="fa-solid fa-mobile-android-alt"></i></div>
+        <div>
+          <h1 class="apps-title">App Blocker Dashboard</h1>
+          <p class="apps-subtitle">Real-time monitoring & ad blocking control</p>
+        </div>
+      </div>
+      <div class="action-buttons">
+        <button id="showBlockedBtn" class="action-btn">
+          <i class="fa-solid fa-list"></i> Show Blocked List
+        </button>
+        <button id="blockAppBtn" class="action-btn">
+          <i class="fa-solid fa-ban"></i> Block Selected
+        </button>
+        <button id="refreshAppsBtn" class="action-btn">
+          <i class="fa-solid fa-sync-alt"></i> Refresh
+        </button>
+      </div>
+    </div>
+
+    <div class="apps-controls">
+      <div class="control-group">
+        <label>Show</label>
+        <select id="pageSize" class="apps-select">
+          <option value="10">10</option>
+          <option value="25" selected>25</option>
+          <option value="50">50</option>
+        </select>
+        <label>entries</label>
+      </div>
+      <div class="control-group">
+        <label>Search:</label>
+        <input type="text" id="searchInput" class="apps-input" placeholder="Search app name or package...">
+      </div>
+    </div>
+
+    <div class="apps-table-container">
+      <div class="apps-table-header">
+        <table>
+          <thead>
+            <tr>
+              <th class="checkbox-col"><input type="checkbox" id="selectAllApps"></th>
+              <th class="name-col">App Name</th>
+              <th class="package-col">Package Name</th>
+              <th class="version-col">Used</th>
+              <th class="status-col">Status</th>
+              <th class="action-col">Action</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+      <div class="apps-table-wrapper">
+        <table id="appsTable">
+          <tbody>
+            <tr class="loading-row">
+              <td colspan="6">
+                <span class="spinner"></span>Loading apps...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="apps-footer">
+        <span id="infoText">Showing 0 to 0 of 0 entries</span>
+        <span id="selectedCount">0 selected</span>
+      </div>
+    </div>
+
+    <div class="blocked-apps-section" id="blockedAppsSection" style="display: none;">
+      <div class="blocked-apps-header">
+        <i class="fa-solid fa-ban" style="font-size: 24px;"></i>
+        <div>
+          <h3>Currently Blocked Apps</h3>
+          <p id="blockedCount">0 apps blocked</p>
+        </div>
+      </div>
+      <div class="blocked-apps-list" id="blockedAppsList">
+        <div style="padding: 20px; text-align: center; color: var(--text-muted);">
+          No blocked apps found
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="toastNotification" class="toast-notification">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastText"></span>
+  </div>
+
+  <div id="successMessage" class="success-message">
+    <i class="fa-solid fa-check-circle"></i>
+    <span>Operation completed successfully!</span>
+  </div>
+
+  <script type="module">
+   
+  </script>
+</body>
+</html>

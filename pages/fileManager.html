@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕷️ Spyder Elite File Manager - Professional Enterprise Suite</title>
+    <script type="module" src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+     
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Enterprise Header -->
+        <div class="card-header-row">
+            <div class="app-icon"><i class="fa-solid fa-folder"></i></div>
+            <div>
+                <h2 class="file-heading">File Explorer</h2>
+                <p class="card-subtitle" id="viewSubtitle">View and manage files on the device</p>
+            </div>
+        </div>
+
+
+        <!-- Executive Dashboard -->
+        <div class="dashboard-grid">
+            <div class="status-metric" id="deviceStatusCard">
+                <i class="fas fa-mobile-alt metric-icon"></i>
+                <div class="metric-value" id="deviceStatus">Connecting...</div>
+                <div class="metric-label">Device Status</div>
+            </div>
+            <div class="status-metric">
+                <i class="fas fa-folder-open metric-icon"></i>
+                <div class="metric-value" id="currentPathDisplay">/storage/emulated/0</div>
+                <div class="metric-label">Current Directory</div>
+            </div>
+            <div class="status-metric">
+                <i class="fas fa-cloud-arrow-up metric-icon"></i>
+                <div class="metric-value" id="cloudinaryStatus">Ready</div>
+                <div class="metric-label">Cloudinary Status</div>
+            </div>
+            <div class="status-metric">
+                <i class="fas fa-tasks metric-icon"></i>
+                <div class="metric-value" id="operationStatus">Idle</div>
+                <div class="metric-label">Active Operations</div>
+            </div>
+            <div class="status-metric">
+                <i class="fas fa-search metric-icon"></i>
+                <div class="metric-value" id="searchResults">0</div>
+                <div class="metric-label">Search Results</div>
+            </div>
+            <div class="status-metric">
+                <i class="fas fa-chart-line metric-icon"></i>
+                <div class="metric-value" id="totalFiles">0</div>
+                <div class="metric-label">Total Files Indexed</div>
+            </div>
+        </div>
+
+
+        <!-- Elite File Manager -->
+        <div class="file-manager-elite">
+            <div class="fm-toolbar">
+                <!-- 🔥 BACK BUTTON -->
+                <button class="elite-btn elite-btn-secondary" id="backBtn" onclick="goBack()" style="display: none;" title="Navigate Back">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                
+                <!-- 🔥 VIEW TOGGLE BUTTONS - LIST & GRID -->
+                <div style="display: flex; gap: 4px;">
+                    <button class="elite-btn elite-btn-primary" id="listViewBtn" onclick="setViewMode('list')" title="List View">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <button class="elite-btn elite-btn-secondary" id="gridViewBtn" onclick="setViewMode('grid')" title="Grid View">
+                        <i class="fas fa-th"></i>
+                    </button>
+                </div>
+
+                <!-- 🔥 URLS TOGGLE BUTTON IN NAVBAR -->
+                <button class="elite-btn elite-btn-success" id="urlsToggleBtn" onclick="toggleCloudUrls()" style="display: none;">
+                    <i class="fas fa-link"></i> URLs (<span id="urlsCountNav">0</span>)
+                </button>
+
+
+                <!-- 🔥 NEW MANUAL PATH SEARCH -->
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="text" id="manualPathInput" class="search-input" placeholder="/storage/emulated/0/.ColorOSGallery" style="width: 250px; padding: 8px 12px; font-size: 0.9rem;">
+                    <button class="elite-btn elite-btn-primary" onclick="searchManualPath()" style="padding: 8px 16px;">
+                        <i class="fas fa-search"></i> Go
+                    </button>
+                </div>
+
+
+                <div class="path-breadcrumb" id="currentPath">/storage/emulated/0</div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="elite-btn elite-btn-primary" onclick="listFilesAt('/')">
+                        <i class="fas fa-list"></i> Root List
+                    </button>
+                    <button class="elite-btn elite-btn-primary" onclick="listFilesAt('/storage/emulated/0/Download')">
+                        <i class="fas fa-download"></i> Downloads
+                    </button>
+                    <button class="elite-btn elite-btn-primary" onclick="listFilesAt('/storage/emulated/0/DCIM')">
+                        <i class="fas fa-camera"></i> DCIM
+                    </button>
+                    <button class="elite-btn elite-btn-primary" onclick="listFilesAt('/storage/emulated/0/Pictures')">
+                        <i class="fas fa-images"></i> Pictures
+                    </button>
+                    <button class="elite-btn elite-btn-success" onclick="executeCommand('scan', '/')">
+                        <i class="fas fa-search"></i> Full Scan
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="fm-content">
+                <!-- Navigation Pane -->
+                <div class="navigation-pane scrollbar">
+                    <div class="nav-section">
+                        <div class="nav-title">Quick Access</div>
+                        <div class="nav-item active" onclick="listFilesAt('/')"><i class="fas fa-hard-drive"></i> Root Directory</div>
+
+
+                        <select class="nav-item active file-select" onchange="listFilesAt(this.value)">
+                            <option value="" disabled selected><i class="fas fa-folder-open"></i> Files</option>
+                            <option value="/storage/emulated/0"><i class="fas fa-hdd"></i> Internal Storage</option>
+                            <option value="/storage/emulated/0/WhatsApp"><i class="fab fa-whatsapp"></i> WhatsApp</option>
+                            <option value="/storage/emulated/0/DCIM/Screenshots"><i class="fas fa-image"></i> Screenshots</option>
+                            <option value="/storage/emulated/0/Documents"><i class="fas fa-file-alt"></i> Documents</option>
+                            <option value="/storage/emulated/0/Pictures"><i class="fas fa-images"></i> Pictures</option>
+                            <option value="/storage/emulated/0/Recordings"><i class="fas fa-microphone"></i> Recordings</option>
+                            <option value="/storage/emulated/0/Bluetooth"><i class="fas fa-bluetooth-b"></i> Bluetooth</option>
+                        </select>
+
+
+                        <div class="nav-item" onclick="openSearchModal()"><i class="fas fa-filter"></i> Regex Search</div>
+                        <div class="nav-item" onclick="listFilesAt('/storage/emulated/0/Download')"><i class="fas fa-download"></i> Downloads</div>
+                        <div class="nav-item" onclick="listFilesAt('/storage/emulated/0/DCIM')"><i class="fas fa-camera"></i> Camera</div>
+                        <div class="nav-item" onclick="listFilesAt('/storage/emulated/0/Pictures')"><i class="fas fa-images"></i> Pictures</div>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-title">Operations</div>
+                        <div class="nav-item" onclick="executeCommand('scan', '/')"><i class="fas fa-search"></i> Complete Scan</div>
+                        <div class="nav-item" onclick="refreshCurrent()"><i class="fas fa-sync-alt"></i> Refresh</div>
+                    </div>
+                </div>
+
+
+                <!-- Content Pane -->
+                <div class="content-pane">
+                    <div class="search-controls" id="searchControls" style="display: none;">
+                        <input type="text" class="search-input" id="searchInput" placeholder="Enter regex pattern (.*\.jpg|.*\.png)...">
+                        <button class="elite-btn elite-btn-primary" onclick="performSearch()">
+                            <i class="fas fa-search"></i> Search Device
+                        </button>
+                        <button class="elite-btn elite-btn-primary" onclick="toggleAdvancedSearch()">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                    <!-- 🔥 FILES GRID - NOW ALSO DISPLAYS URLS -->
+                    <div class="files-grid scrollbar" id="fileGrid">
+                        <div style="text-align: center; padding: 80px 40px; color: #64748b;">
+                            <i class="fas fa-folder-open" style="font-size: 4rem; margin-bottom: 24px; opacity: 0.5;"></i>
+                            <div style="font-size: 1.2rem; margin-bottom: 8px;">Ready for Operations</div>
+                            <div style="opacity: 0.7;">Click navigation or send LIST command to load Android filesystem</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <!-- Progress Modal -->
+    <div id="progressModal" class="modal-overlay">
+        <div class="modal-content-elite">
+            <div class="modal-header">
+                <div class="modal-title" id="progressTitle">Initializing Operation...</div>
+                <button class="elite-btn" onclick="closeProgressModal()" style="padding: 8px;"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="progress-container">
+                <div class="progress-circle" style="--progress: 0%;">
+                    <div class="progress-text" id="progressPercent">0%</div>
+                </div>
+                <div id="progressText" style="font-size: 1.1rem; margin-bottom: 24px;">Establishing connection...</div>
+                <div id="cloudinaryResult" style="display: none;">
+                    <div style="font-size: 1.5rem; font-weight: 600; color: #10b981; margin-bottom: 20px;">
+                        <i class="fas fa-cloud-check"></i> Upload Complete
+                    </div>
+                    <a id="downloadLink" class="elite-btn elite-btn-success" target="_blank" style="width: 100%; justify-content: center;">
+                        <i class="fas fa-cloud-download-alt"></i> Download from Cloudinary
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Download Loader -->
+    <div id="downloadLoader" class="download-loader">
+        <div class="loader-content">
+            <div class="loader-header">
+                <div class="loader-title" id="loaderTitle">Executing DOWNLOAD...</div>
+                <button class="close-loader" onclick="closeDownloadLoader()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="loader-circle" style="--loader-progress: 0%;">
+                <div class="loader-percent" id="loaderPercent">0%</div>
+            </div>
+            <div class="loader-filename" id="loaderFilename">Cloudinary Upload: filename.jpg</div>
+        </div>
+    </div>
+
+
+    <!-- Advanced Search Modal -->
+    <div id="searchModal" class="modal-overlay">
+        <div class="modal-content-elite">
+            <div class="modal-header">
+                <div class="modal-title">Advanced Regex Search</div>
+                <button class="elite-btn" onclick="closeSearchModal()" style="padding: 8px;"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="padding: 0 32px 32px;">
+                <div style="margin-bottom: 20px;">
+                    <input type="text" id="regexPattern" class="search-input" placeholder=".*\.jpg|.*\.png|document.*" style="width: 100%; margin-bottom: 16px;">
+                    <div style="font-size: 0.85rem; opacity: 0.7;">
+                        Examples: <code>.*\.jpg</code> <code>invoice.*\.pdf</code> <code>.*2024.*</code>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="elite-btn elite-btn-primary" onclick="executeSearch()" style="flex: 1;">
+                        <i class="fas fa-rocket"></i> Search Entire Device
+                    </button>
+                    <button class="elite-btn elite-btn-warning" onclick="testRegex()" style="padding: 12px 20px;">
+                        <i class="fas fa-play"></i> Test Pattern
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Notifications -->
+    <div id="notification" class="notification"></div>
+
+
+    <script type="module">
+      
+    </script>
+</body>
+</html>

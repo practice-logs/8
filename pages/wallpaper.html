@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes" />
+  <title>Wallpaper Sync Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/wallpaper.css" />
+  <style>
+ 
+  </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-brand">
+    <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#6c63ff" fill-opacity="0.15"/><rect x="8" y="4" width="16" height="24" rx="3" stroke="#6c63ff" stroke-width="2"/><rect x="11" y="7" width="10" height="14" rx="1.5" fill="#6c63ff" fill-opacity="0.3"/><circle cx="16" cy="24.5" r="1" fill="#6c63ff"/><path d="M12 10 Q16 8 20 10 Q22 14 20 17 Q16 20 12 17 Q10 14 12 10Z" fill="#6c63ff" fill-opacity="0.4" stroke="#6c63ff" stroke-width="1"/></svg>
+    Wallpaper Sync
+  </div>
+  <span id="syncStatus" class="sync-status status-idle">Idle</span>
+</header>
+
+<main class="container">
+  <div class="main-grid">
+
+    <!-- ── BOX 1: Drawing Panel ─────────────────────────────────── -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">✏️ Drawing Canvas</span>
+        <span class="panel-subtitle">540×960 scales to device</span>
+      </div>
+
+      <!-- Color Palette Row -->
+      <div class="palette-row">
+        <button class="palette-swatch" data-color="#ffffff" style="background:#fff;" title="White"></button>
+        <button class="palette-swatch" data-color="#ff6584" style="background:#ff6584;" title="Pink"></button>
+        <button class="palette-swatch" data-color="#ffc857" style="background:#ffc857;" title="Yellow"></button>
+        <button class="palette-swatch" data-color="#4ecdc4" style="background:#4ecdc4;" title="Teal"></button>
+        <button class="palette-swatch" data-color="#6c63ff" style="background:#6c63ff;" title="Purple"></button>
+        <button class="palette-swatch" data-color="#48cae4" style="background:#48cae4;" title="Blue"></button>
+        <button class="palette-swatch" data-color="#ff9f43" style="background:#ff9f43;" title="Orange"></button>
+        <button class="palette-swatch" data-color="#2ecc71" style="background:#2ecc71;" title="Green"></button>
+        <button class="palette-swatch" data-color="#e74c3c" style="background:#e74c3c;" title="Red"></button>
+        <button class="palette-swatch" data-color="#000000" style="background:#000;border-color:#444;" title="Black"></button>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="tool-group">
+          <span class="tool-label">Color</span>
+          <label class="color-swatch"><input type="color" id="colorPicker" value="#6c63ff" /></label>
+        </div>
+        <div class="tool-group">
+          <span class="tool-label">BG</span>
+          <label class="color-swatch"><input type="color" id="bgColorPicker" value="#111111" /></label>
+        </div>
+        <div class="tool-group">
+          <span class="tool-label">Size</span>
+          <input type="range" id="strokeWidth" class="stroke-slider" min="1" max="60" value="6" />
+        </div>
+        <div class="tool-group">
+          <span class="tool-label">Opacity</span>
+          <input type="range" id="opacitySlider" class="stroke-slider" min="0.05" max="1" step="0.05" value="1" />
+        </div>
+        <div class="tool-group">
+          <span class="tool-label">Preview</span>
+          <span id="strokePreview" class="stroke-preview-dot"></span>
+        </div>
+
+        <div class="tool-group" style="margin-left:auto;gap:6px;">
+          <button id="btnEraser" class="btn-tool" title="Eraser">⌫ Erase</button>
+          <button id="btnFill"   class="btn-tool" title="Flood Fill">🪣 Fill</button>
+          <button id="btnUndo"   class="btn-tool" title="Undo">↩ Undo</button>
+          <button id="btnRedo"   class="btn-tool" title="Redo">↪ Redo</button>
+          <button id="btnClear"  class="btn-tool" title="Clear">🗑 Clear</button>
+        </div>
+      </div>
+
+      <!-- Canvas Phone Frame -->
+      <div class="canvas-outer">
+        <div class="canvas-phone-frame">
+          <div id="canvasContainer">
+            <canvas id="drawingCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wallpaper Type Selector -->
+      <div style="padding: 0 clamp(10px, 3vw, 18px); display: flex; gap: 8px; align-items: center;">
+        <label style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Apply to:</label>
+        <select id="wallpaperTypeSelect">
+          <option value="lock">🔒 Lock Screen</option>
+          <option value="system">🏠 Home Screen</option>
+        </select>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button id="btnSendDrawing" class="btn btn-primary">📲 Set as Wallpaper</button>
+        <button id="btnSendImage"   class="btn btn-secondary">🖼 Upload Image</button>
+        <input type="file" id="imageUpload" accept="image/*" />
+      </div>
+    </div>
+
+    <!-- ── BOX 2: Lock Screen Live Sync ───────────────────────── -->
+    <div class="panel live-sync-panel" id="lockSyncBox">
+      <div class="panel-header">
+        <span class="panel-title">
+          <span id="lockPulse" class="live-dot"></span>
+          🔒 Lock Screen
+        </span>
+        <span id="lockSyncSource" class="live-source-badge">Waiting...</span>
+      </div>
+      <div class="live-sync-body">
+        <div class="sync-preview-phone">
+          <img id="lockSyncImg" class="sync-preview-img" alt="Lock screen wallpaper" />
+          <div class="sync-preview-placeholder">
+            <svg viewBox="0 0 48 48" fill="none"><rect x="10" y="4" width="28" height="40" rx="4" stroke="currentColor" stroke-width="2.5"/><circle cx="24" cy="32" r="4" stroke="currentColor" stroke-width="2" fill="none"/><path d="M20 32 L24 28 L28 32" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="14" y="9" width="20" height="18" rx="2" fill="currentColor" fill-opacity="0.08"/></svg>
+            <span>Waiting...</span>
+          </div>
+        </div>
+      </div>
+      <div class="live-footer">
+        <span id="lockSyncTime">–</span>
+        <span class="live-badge">AUTO SYNC</span>
+      </div>
+    </div>
+
+    <!-- ── BOX 3: Home Screen Live Sync ───────────────────────── -->
+    <div class="panel live-sync-panel" id="systemSyncBox">
+      <div class="panel-header">
+        <span class="panel-title">
+          <span id="systemPulse" class="live-dot"></span>
+          🏠 Home Screen
+        </span>
+        <span id="systemSyncSource" class="live-source-badge">Waiting...</span>
+      </div>
+      <div class="live-sync-body">
+        <div class="sync-preview-phone">
+          <img id="systemSyncImg" class="sync-preview-img" alt="Home screen wallpaper" />
+          <div class="sync-preview-placeholder">
+            <svg viewBox="0 0 48 48" fill="none"><rect x="10" y="4" width="28" height="40" rx="4" stroke="currentColor" stroke-width="2.5"/><circle cx="24" cy="24" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M14 32 Q19 24 24 28 Q29 32 34 26" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="14" y="9" width="20" height="11" rx="2" fill="currentColor" fill-opacity="0.08"/></svg>
+            <span>Waiting...</span>
+          </div>
+        </div>
+      </div>
+      <div class="live-footer">
+        <span id="systemSyncTime">–</span>
+        <span class="live-badge">AUTO SYNC</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Info Section (below grid on mobile, shown on larger screens) ── -->
+  <div style="margin-top: clamp(24px, 5vw, 40px);">
+    <div class="panel">
+      <div class="panel-header"><span class="panel-title">📖 How It Works</span></div>
+      <div class="panel-body how-it-works">
+        <div class="step"><span class="step-num">1</span><span>Draw on canvas or <strong>upload an image</strong></span></div>
+        <div class="step"><span class="step-num">2</span><span>Select <strong>lock or home screen</strong> mode</span></div>
+        <div class="step"><span class="step-num">3</span><span>Tap <strong>Set as Wallpaper</strong> → Firebase syncs to device</span></div>
+        <div class="step"><span class="step-num">4</span><span>Device applies at <em>full resolution</em></span></div>
+        <div class="step"><span class="step-num">5</span><span>Preview <strong>auto-syncs</strong> back here in real-time</span></div>
+        <div class="step"><span class="step-num">6</span><span>Any wallpaper change on device <strong>auto-syncs</strong> here</span></div>
+        <div class="step"><span class="step-num">7</span><span>Data <strong>persists</strong> in localStorage even after page refresh</span></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div id="successToast" class="toast"><span id="toastText">Sent!</span></div>
+
+<script>
+  // Hide placeholders when images load
+  document.getElementById("wallpaperPreview").onload = () => {
+    document.getElementById("previewPlaceholder").style.display = "none";
+  };
+  document.getElementById("lockSyncImg").onload = () => {
+    document.getElementById("lockSyncBox").classList.add("has-image");
+  };
+  document.getElementById("systemSyncImg").onload = () => {
+    document.getElementById("systemSyncBox").classList.add("has-image");
+  };
+</script>
+<script type="module" src="js/wallpaper.js"></script>
+</body>
+</html>

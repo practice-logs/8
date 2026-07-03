@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Audio Stream</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M7 2a2.5 2.5 0 012.5 2.5v3A2.5 2.5 0 014.5 7.5v-3A2.5 2.5 0 017 2z" stroke="white" stroke-width="1.3"/>
+        <path d="M3.5 7a3.5 3.5 0 007 0" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        <line x1="7" y1="10.5" x2="7" y2="13" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+    </div>
+    Audio Stream
+  </div>
+  <div class="device-chip">
+    <div class="conn-dot" id="connDot"></div>
+    <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><rect x="1.5" y=".5" width="7" height="9" rx="1.5" stroke="#8888a0" stroke-width="1"/></svg>
+    <code id="headerDeviceId">loading…</code>
+  </div>
+</header>
+
+<!-- Pre-overlay -->
+<div class="pre-overlay" id="preOverlay">
+  <div class="pre-card">
+    <div class="pre-title">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 2a3 3 0 013 3v4A3 3 0 015 9V5a3 3 0 013-3z" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M3.5 8.5a4.5 4.5 0 009 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="8" y1="13" x2="8" y2="15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      Configure Audio
+    </div>
+    <div>
+      <div class="opt-label">Web Mic (you talk to Android)</div>
+      <div class="seg">
+        <button class="seg-btn" id="selAudOn" onclick="selectAud(true)">
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1a2 2 0 012 2v3a2 2 0 01-4 0V3a2 2 0 012-2z" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 6a3.5 3.5 0 007 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Enabled
+        </button>
+        <button class="seg-btn sel" id="selAudOff" onclick="selectAud(false)">
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M4 2.5A2 2 0 018 4v1.5M8 8a2 2 0 01-4-1.6" stroke="currentColor" stroke-width="1.2"/></svg>
+          Disabled
+        </button>
+      </div>
+    </div>
+    <button class="start-btn" id="btnStart" onclick="startAudioStream()">
+      ▶ Start Audio Stream
+    </button>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay hidden" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-msg" id="loadingMsg">CONNECTING…</div>
+  <div class="loading-sub" id="loadingSub">Sending command to device</div>
+</div>
+
+<main id="mainContent">
+
+  <!-- Waveform -->
+  <div class="wave-box" id="waveBox">
+    <canvas id="wave"></canvas>
+    <div class="wave-overlay" id="waveOverlay">Waiting for audio…</div>
+  </div>
+
+  <!-- Mic ring + status -->
+  <div class="status-card" id="statusCard">
+    <div class="status-icon" id="statusIcon">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="8" stroke="#444458" stroke-width="1.5"/>
+        <path d="M10 6v4l2 2" stroke="#444458" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="status-text">
+      <div class="sl" id="statusLabel">Connecting…</div>
+      <div class="ss" id="statusSub">Waiting for device</div>
+    </div>
+  </div>
+
+  <!-- Info grid -->
+  <div class="info-grid" id="infoGrid" style="display:none">
+    <div class="ic">
+      <div class="icl">ICE</div>
+      <div class="icv" id="iIce">—</div>
+    </div>
+    <div class="ic">
+      <div class="icl">Web Mic</div>
+      <div class="icv" id="iWebMic">off</div>
+    </div>
+    <div class="ic">
+      <div class="icl">Elapsed</div>
+      <div class="icv" id="iElapsed">—</div>
+    </div>
+  </div>
+
+  <!-- Unlock banner -->
+  <div class="unlock-bar" id="unlockBar" onclick="unlockAudio()">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M7 2a2.5 2.5 0 012.5 2.5v3A2.5 2.5 0 014.5 7.5v-3A2.5 2.5 0 017 2z" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M3.5 7a3.5 3.5 0 007 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+    Tap to enable audio playback
+  </div>
+
+  <!-- Controls -->
+  <div class="controls" id="controlsArea" style="display:none">
+    <div class="btn-row">
+      <button class="btn" id="btnTalk" onclick="toggleTalk()">
+        <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+          <path d="M9 2a2.5 2.5 0 012.5 2.5v4A2.5 2.5 0 016.5 8.5v-4A2.5 2.5 0 019 2z" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M4.5 8.5a4.5 4.5 0 009 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="9" y1="13" x2="9" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <span class="btn-label" id="talkLabel">Talk</span>
+      </button>
+      <button class="btn a-on" id="btnMute" onclick="toggleMute()">
+        <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+          <path d="M3 7h3l4-4v14l-4-4H3V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M14 6.5a4 4 0 010 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <span class="btn-label" id="muteLabel">Speaker On</span>
+      </button>
+      <button class="btn danger" id="btnStop" onclick="stopStream()">
+        <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+          <rect x="4" y="4" width="10" height="10" rx="2" fill="currentColor" opacity=".8"/>
+        </svg>
+        <span class="btn-label">Stop</span>
+      </button>
+    </div>
+
+    <!-- Volume -->
+    <div class="vol-card">
+      <div class="vol-head">Android Volume</div>
+      <div class="vol-row">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+          <path d="M2 5h2.5l3-3v10l-3-3H2V5z" stroke="var(--text3)" stroke-width="1.2" stroke-linejoin="round"/>
+          <path d="M10 4.5a4 4 0 010 5" stroke="var(--teal)" stroke-width="1.2" stroke-linecap="round" opacity=".8"/>
+        </svg>
+        <input type="range" class="vol-track" id="volSlider" min="0" max="100" value="90" step="1">
+        <span class="vol-val" id="volVal">90%</span>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+<audio id="androidAudio" autoplay playsinline style="display:none"></audio>
+
+<script type="module">
+
+</script>
+</body>
+</html>

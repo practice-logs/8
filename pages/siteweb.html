@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Activity</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+   
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="main-header-left">
+      <div class="main-header-title">
+        <i class="fa-solid fa-globe"></i>
+        <span>Website Activity</span>
+      </div>
+      <div class="main-header-sub">Recently visited websites from the device</div>
+    </div>
+    <div class="main-header-right">
+      <div class="badge-pill">
+        <span class="badge-dot"></span>
+        Realtime Firebase
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Card -->
+  <main class="page-shell">
+    <div class="card-shell">
+      <div class="card-inner">
+        <div class="card-top">
+          <div class="card-meta-row">
+            <span id="summaryText">Loading activity...</span>
+            <span class="card-meta-chip">
+              <i class="fa-regular fa-clock"></i>
+              Most recent first
+            </span>
+          </div>
+
+          <div class="search-row">
+            <label class="search-label" for="searchInput">Search websites</label>
+            <div class="search-input-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="searchInput" placeholder="Search website name or domain...">
+            </div>
+          </div>
+        </div>
+
+        <!-- Loader -->
+        <div id="loader" class="state-box">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          Loading websites...
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyBox" class="state-box">
+          <i class="fa-solid fa-folder-open"></i>
+          No website data found
+        </div>
+
+        <!-- Website List -->
+        <div class="list-area" id="webList"></div>
+
+        <!-- Footer -->
+        <div class="card-footer">
+          <span id="countText">
+            <span class="footer-dot"></span>
+            0 sites in activity
+          </span>
+          <span>Click a row to open the website in a new tab</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    
+  </script>
+
+</body>
+</html>

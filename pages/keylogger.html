@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keylogger Logs - Professional Dark Mode</title>
+
+  <style>
+  
+  </style>
+</head>
+
+<body>
+  <section class="logs-container">
+
+    <!-- Header -->
+    <div class="logs-header">
+      <div class="logs-title-section">
+        <div class="logs-icon">⌨️</div>
+        <div>
+          <h3 class="logs-title">Keylogger Logs</h3>
+          <p class="logs-subtitle">Application keystroke records</p>
+        </div>
+      </div>
+
+      <!-- Bulk delete button -->
+      <button id="deleteLogsBtn" class="delete-btn" disabled>
+        <span class="delete-dot"></span>
+        <span>Delete Selected</span>
+      </button>
+    </div>
+
+    <!-- Controls -->
+    <div class="logs-controls">
+      <div class="control-group">
+        <label>Show</label>
+        <select id="pageSize" class="logs-select">
+          <option value="10">10</option>
+          <option value="25" selected>25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        <label>entries</label>
+      </div>
+
+      <div class="control-group" style="margin-left: auto;">
+        <label>Search:</label>
+        <input type="text" id="searchInput" class="logs-input" placeholder="Search app, text, or timestamp...">
+      </div>
+    </div>
+
+    <!-- Desktop Table View -->
+    <div class="logs-table-container">
+      <div class="logs-table-header">
+        <table>
+          <thead>
+            <tr>
+              <th class="checkbox-col"><input type="checkbox" id="selectAllLogs"></th>
+              <th class="app-col">Application</th>
+              <th class="text-col">Captured Text</th>
+              <th class="timestamp-col">Timestamp</th>
+              <th class="action-col">Action</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+
+      <div class="logs-table-wrapper">
+        <table id="logsTable">
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- Footer -->
+      <div class="logs-footer">
+        <span id="infoText">Showing 0 to 0 of 0 entries</span>
+      </div>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="mobile-cards">
+      <div class="mobile-cards-container">
+        <div class="mobile-cards-header">
+          <label class="mobile-select-all">
+            <input type="checkbox" id="selectAllLogsMobile">
+            <span>Select All</span>
+          </label>
+          <span id="mobileInfoText" style="font-size: 0.8rem; color: var(--text-muted);">0 entries</span>
+        </div>
+        <div class="mobile-cards-list" id="mobileCardsList">
+          <!-- Cards will be rendered here -->
+        </div>
+        <div class="mobile-footer">
+          <span id="mobileFooterText">Showing 0 to 0 of 0 entries</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log Detail Modal -->
+    <div id="logModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Log Details</h2>
+          <button class="close-btn" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+          <!-- Dynamic content will be populated here -->
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Success Message -->
+  <div id="successMessage" class="success-message">
+    ✅ <span id="successText"></span> logs deleted successfully!
+  </div>
+
+  <script type="module">
+  
+  </script>
+</body>
+</html>

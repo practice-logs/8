@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Call Signal — Device Call History</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="signal.css">
+</head>
+<body>
+
+  <div class="signal-app">
+
+    <!-- Top bar -->
+    <header class="signal-topbar">
+      <div class="brand">
+        <span class="brand-mark"><i class="fa-solid fa-phone"></i></span>
+        <div class="brand-text">
+          <h1>Call Logs</h1>
+          <p id="rangeLabel">Loading history…</p>
+        </div>
+      </div>
+      
+    </header>
+
+    <!-- Stat strip — the signature element -->
+    <section class="stat-strip" id="statStrip">
+      <div class="stat-cell" data-stat="total">
+        <span class="stat-num" id="statTotal">0</span>
+        <span class="stat-label">Total Calls</span>
+      </div>
+      <div class="stat-cell" data-stat="incoming">
+        <span class="stat-num" id="statIncoming">0</span>
+        <span class="stat-label">Incoming</span>
+      </div>
+      <div class="stat-cell" data-stat="outgoing">
+        <span class="stat-num" id="statOutgoing">0</span>
+        <span class="stat-label">Outgoing</span>
+      </div>
+      <div class="stat-cell" data-stat="missed">
+        <span class="stat-num" id="statMissed">0</span>
+        <span class="stat-label">Missed</span>
+      </div>
+      <div class="stat-cell" data-stat="duration">
+        <span class="stat-num" id="statDuration">0m</span>
+        <span class="stat-label">Talk Time</span>
+      </div>
+    </section>
+
+    <!-- Controls -->
+    <section class="signal-controls">
+      <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Search name, number, or type…">
+      </div>
+      <div class="filter-chips" id="filterChips">
+        <button class="chip active" data-filter="ALL">All</button>
+        <button class="chip" data-filter="INCOMING"><span class="chip-dot incoming"></span>Incoming</button>
+        <button class="chip" data-filter="OUTGOING"><span class="chip-dot outgoing"></span>Outgoing</button>
+        <button class="chip" data-filter="MISSED"><span class="chip-dot missed"></span>Missed</button>
+        <button id="deleteBtn" class="purge-btn" disabled>
+        <span>Delete</span>
+        <span id="purgeCount" class="purge-count">0</span>
+      </button>
+      </div>
+      <label class="select-all-wrap">
+        <input type="checkbox" id="selectAll">
+        <span>Select all</span>
+      </label>
+    </section>
+
+    <!-- Timeline -->
+    <main class="timeline-wrap" id="timelineWrap">
+      <div class="loading-state" id="loadingState">
+        <div class="pulse-loader"><span></span><span></span><span></span></div>
+        <p>Tuning into device signal…</p>
+      </div>
+    </main>
+
+    <!-- Load more -->
+    <div class="load-more-wrap">
+      <button id="loadMoreBtn" class="load-more-btn" hidden>Load earlier calls</button>
+      <span id="footCount" class="foot-count"></span>
+    </div>
+  </div>
+
+  <!-- Detail Drawer -->
+  <div id="drawerOverlay" class="drawer-overlay"></div>
+  <aside id="detailDrawer" class="detail-drawer">
+    <div class="drawer-head">
+      <span class="drawer-eyebrow">Call detail</span>
+      <button id="closeDrawer" class="drawer-close">&times;</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+
+  <!-- Toast -->
+  <div id="toast" class="toast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastText"></span>
+  </div>
+
+  <script type="module" src="signal.js"></script>
+</body>
+</html>

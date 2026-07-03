@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>ScreenView — Remote Device Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Clash+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+#deviceFrame { width: 410px; height: 625px; border: 0; background: transparent; overflow: hidden; }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ── Header ── -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">📡</div>
+      <div>
+        <div class="logo-text">ScreenView</div>
+        <div class="logo-sub">Remote Control</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="live-indicator" id="liveIndicator">
+        <div class="live-dot"></div>LIVE
+      </div>
+      <div class="badge" id="deviceBadge">— No device —</div>
+    </div>
+   
+  </header>
+
+  <!-- ── Main ── -->
+  <main>
+
+
+    <iframe
+    id="deviceFrame"
+    src="pages/device.html"
+    scrolling="no">
+</iframe>
+
+    <!-- Phone shell -->
+    <div class="phone-wrap" id="phoneWrap">
+      <div class="phone-ambient"></div>
+      <div class="phone" id="phone">
+        <div class="notch">
+          <div class="notch-cam"></div>
+          <div class="notch-speaker"></div>
+        </div>
+        <div class="btn-side btn-power"></div>
+        <div class="btn-side btn-vup"></div>
+        <div class="btn-side btn-vdn"></div>
+        <div class="btn-side btn-mute"></div>
+
+        <div class="phone-screen" id="phoneScreen">
+          <div class="scan-line"></div>
+          <div class="screen-idle" id="screenIdle">
+            <div class="idle-icon">📱</div>
+            <div class="idle-title" id="idleMsg">Tap Start to connect</div>
+            <div class="idle-sub" id="idleSub">Waiting for device</div>
+            <div class="spinner" id="spinner"></div>
+          </div>
+          <video id="remoteVideo" class="remote-vid" autoplay playsinline muted></video>
+        </div>
+
+        <div class="phone-bar">
+          <button class="nav-btn-device" id="btnBack" title="Back">◀</button>
+          <button class="nav-btn-device" id="btnHome" title="Home">⬤</button>
+          <button class="nav-btn-device" id="btnRecents" title="Recents">▣</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-col">
+      <!-- Device card -->
+      <div class="device-card">
+        <div class="device-icon">📱</div>
+        <div class="device-info">
+          <div class="device-name" id="deviceName">No Device Paired</div>
+          <div class="device-id" id="deviceIdDisplay">uid: —</div>
+        </div>
+        <div class="device-ping" id="devicePing">—</div>
+      </div>
+
+      <!-- Status -->
+      <div class="status-bar">
+        <div class="status-dot" id="statusDot"></div>
+        <div class="status-info">
+          <div class="status-label">Connection Status</div>
+          <div class="status-msg" id="statusText">Idle — press Start</div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="btn-row">
+        <button class="btn btn-start" id="btnStart" disabled>
+          <svg width="14" height="14" viewBox="0 0 12 12" fill="currentColor"><polygon points="2,1 11,6 2,11"/></svg>
+          Start Stream
+        </button>
+        <button class="btn btn-stop" id="btnStop" disabled>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="1" width="10" height="10" rx="2"/></svg>
+          Stop
+        </button>
+        <button class="btn-icon" id="btnFs" title="Fullscreen">⛶</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">ICE State</div>
+          <div class="stat-val" id="statIce">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Connection</div>
+          <div class="stat-val" id="statConn">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Heartbeat</div>
+          <div class="stat-val" id="statHb">—</div>
+        </div>
+      </div>
+
+      <!-- Power Controls -->
+      <div class="power-card">
+        <div class="power-label">Device Power</div>
+        <div class="power-row">
+          <button class="btn-power-on" id="btnScreenOn" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            Screen On
+          </button>
+          <button class="btn-power-off" id="btnScreenOff" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64A9 9 0 1 1 5.64 5.64"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+            Screen Off
+          </button>
+        </div>
+      </div>
+
+      <!-- Info note -->
+      <div class="info-note">
+        <strong>Tap or swipe</strong> on the phone screen to control the device. Use the nav buttons to go Back, Home, or view Recents.
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span>Firebase RTDB · WebRTC · Touch Control</span>
+    <span id="footerUid">uid: —</span>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- ══ Fullscreen Overlay ══ -->
+<div id="fsOverlay">
+  <div class="fs-topbar">
+    <span class="fs-title">📡 ScreenView — Live</span>
+    <button class="fs-close-btn" id="fsClose">✕ Exit</button>
+  </div>
+  <!-- Video fills flex:1 → no clipping on mobile -->
+  <video id="fsVideo" autoplay playsinline muted></video>
+  <div class="fs-nav-bar">
+    <button class="nav-btn-device" id="fsBtnBack" title="Back">◀</button>
+    <button class="nav-btn-device" id="fsBtnHome" title="Home">⬤</button>
+    <button class="nav-btn-device" id="fsBtnRecents" title="Recents">▣</button>
+  </div>
+</div>
+
+<script type="module">
+
+</script>
+<script type="module" src="./../js/pages/device.js"></script>
+</body>
+</html>

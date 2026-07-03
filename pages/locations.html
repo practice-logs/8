@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Location Tracker</title>
+
+<style>
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="header">Location Monitoring</div>
+
+    <div class="map-header">
+        <h2 id="mapTitle">📡 Live Location</h2>
+        <button id="liveBtn" class="live-btn">Go to Live Location</button>
+    </div>
+
+    <div class="map-card">
+        <iframe id="mapFrame"
+            src="https://maps.google.com/maps?q=0,0&z=15&output=embed"
+            loading="lazy"></iframe>
+    </div>
+
+    <div class="section">
+        <h3>📜 Location History</h3>
+        <div class="history-list" id="historyList">
+            <div class="empty">Waiting for location data...</div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

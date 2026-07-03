@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>NEXUS · WebRTC · v7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+
+</style>
+
+</head>
+<body>
+<div class="app">
+
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-hex">N</div>
+    <div><div class="logo-name">NEXUS</div><div class="logo-ver">WEBRTC v7</div></div>
+  </div>
+  <div class="tsep"></div>
+  <!-- Signaling state machine display -->
+  <div class="sig-timeline" id="sigTimeline">
+    <span class="sig-step" id="ss0">Auth</span>
+    <span class="sig-arr">›</span>
+    <span class="sig-step" id="ss1">Device</span>
+    <span class="sig-arr">›</span>
+    <span class="sig-step" id="ss2">CMD</span>
+    <span class="sig-arr">›</span>
+    <span class="sig-step" id="ss3">Ready</span>
+    <span class="sig-arr">›</span>
+    <span class="sig-step" id="ss4">Offer</span>
+    <span class="sig-arr">›</span>
+    <span class="sig-step" id="ss5">Answer</span>
+    <span class="sig-arr">›</span>
+    <span class="sig-step" id="ss6">ICE</span>
+    <span class="sig-arr">›</span>
+    <span class="sig-step" id="ss7">⚡ LIVE</span>
+  </div>
+  <div class="tsep"></div>
+  <div id="devChip" class="dev-chip">
+    <span class="sdot"></span>
+    <span id="devLabel">Connecting…</span>
+  </div>
+  <div class="ping-badge" id="pingBadge" onclick="doPing()">
+    <span class="ping-dot"></span>
+    <span id="pingVal">PING</span>
+  </div>
+  <div class="top-right">
+    <div class="top-status" id="topStatus">Waiting…</div>
+    <button class="switch-btn"  onclick="loadPage('live-activity')">🔥 Switch to Firebase</button>
+  </div>
+</header>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar-activity">
+  <div class="sb-sec" style="padding-top:4px">
+    
+      <div class="phone-toolbar">
+    <div class="ptog" id="togLabel" onclick="toggleLabel()">🏷 Labels</div>
+    <div class="ptog" id="togInteract" onclick="toggleInteract()">✛ Interact</div>
+    <div class="pt-sep"></div>
+    <div class="ptog" id="togBp" onclick="toggleBp()">⬚ Blueprint</div>
+    <div class="ptog" id="togPd" onclick="togglePd()">● Positions</div>
+    <div class="ptog" id="togCk" onclick="toggleCkOverlay()">◉ Clickables</div>
+    <div class="pt-sep"></div>
+    <div class="ptog" id="togAuto" onclick="toggleAutoScan()">⟳ Auto</div>
+    <div class="ptog" id="togAutoPos" onclick="toggleAutoScanPos()">⟳+ Pos</div>
+    <div class="pt-sep"></div>
+    <div class="pt-info" id="ptInfo">No connection</div>
+  </div>
+
+   <div class="sb-sec">
+    <div class="sb-lbl">WebRTC</div>
+    <button class="sb-btn g" id="btnWRTC" onclick="startWebRTCSession()"><span class="sb-ico">⚡</span>Connect WebRTC</button>
+    <button class="sb-btn r" id="btnWRTCStop" disabled onclick="stopWebRTCSession()"><span class="sb-ico">⏹</span>Disconnect</button>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Clear</div>
+    <button class="sb-btn r" onclick="confirmClear('clearClicks','Clear clicks?','Removes last click data from Firebase.')"><span class="sb-ico">🗑</span>Clear Clicks</button>
+    <button class="sb-btn r" onclick="confirmClear('clearAll','Clear all?','Removes all live data.')"><span class="sb-ico">⚠</span>Clear All</button>
+  </div>
+  <div class="sb-foot" id="sbFoot">Ready · WebRTC mode</div>
+
+    <div class="sb-lbl">Capture</div>
+    <button class="sb-btn" id="btnRS" disabled onclick="cmdReadScreen()"><span class="sb-ico">📋</span>Read Screen</button>
+    <button class="sb-btn a" id="btnRSP" disabled onclick="cmdReadScreenPos()"><span class="sb-ico">📌</span>Read + Positions</button>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Continuous Reader</div>
+    <button class="sb-btn g" id="btnSR" disabled onclick="cmdStartReader(false)"><span class="sb-ico">▶</span>Start Reader</button>
+    <button class="sb-btn a" id="btnSRP" disabled onclick="cmdStartReader(true)"><span class="sb-ico">🎯</span>Start + Positions</button>
+    <button class="sb-btn r" id="btnStop" disabled onclick="cmdStopReader()"><span class="sb-ico">⏹</span>Stop Reader</button>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Live Accessibility</div>
+    <button class="sb-btn a11y-main" id="btnA11y" disabled onclick="startA11y()"><span class="sb-ico">🌲</span>Start Live A11y</button>
+  </div>
+  <!-- <div class="sb-sec">
+    <div class="sb-lbl">Device</div>
+    <button class="sb-btn a" id="btnWake" disabled onclick="cmdScreenOn()"><span class="sb-ico">☀</span>Wake Screen</button>
+    <div class="sb-row">
+      <button class="sb-btn" id="btnHome" disabled onclick="sendCmd({action:'home'})"><span class="sb-ico">⬤</span>Home</button>
+      <button class="sb-btn" id="btnBack" disabled onclick="sendCmd({action:'back'})"><span class="sb-ico">◀</span>Back</button>
+    </div>
+    <button class="sb-btn" id="btnRec" disabled onclick="sendCmd({action:'recents'})"><span class="sb-ico">▣</span>Recents</button>
+  </div> -->
+ 
+</aside>
+
+<!-- ══ MIDDLE / PHONE ══ -->
+<div class="mid">
+  <!-- <div class="phone-toolbar">
+    <div class="ptog" id="togLabel" onclick="toggleLabel()">🏷 Labels</div>
+    <div class="ptog" id="togInteract" onclick="toggleInteract()">✛ Interact</div>
+    <div class="pt-sep"></div>
+    <div class="ptog" id="togBp" onclick="toggleBp()">⬚ Blueprint</div>
+    <div class="ptog" id="togPd" onclick="togglePd()">● Positions</div>
+    <div class="ptog" id="togCk" onclick="toggleCkOverlay()">◉ Clickables</div>
+    <div class="pt-sep"></div>
+    <div class="ptog" id="togAuto" onclick="toggleAutoScan()">⟳ Auto</div>
+    <div class="ptog" id="togAutoPos" onclick="toggleAutoScanPos()">⟳+ Pos</div>
+    <div class="pt-sep"></div>
+    <div class="pt-info" id="ptInfo">No connection</div>
+  </div> -->
+  <div class="pkg-row">
+    <span>PKG: <span class="pv" id="curPkg">—</span></span>
+    <span>Els: <span class="cv" id="curEl">—</span></span>
+    <span>API: <span class="cv" id="curApi">—</span></span>
+    <span>Clk: <span class="gv" id="curClk">—</span></span>
+    <span id="snapTime" style="font-size:7px;color:var(--dm2)"></span>
+    <div class="lat-badge" id="latBadge" style="display:none">⚡ <span id="latVal">—</span>ms</div>
+  </div>
+  <div class="phone-canvas" id="phoneCanvas">
+    <div class="pf-wrap" id="pfWrap">
+
+        <!-- <iframe 
+    id="deviceFrame" style=" width: 325px; height: 560px; border: 0; background: transparent; overflow: hidden;border: 1px solid red"
+    src="pages/device.html"
+    scrolling="no">
+</iframe> -->
+
+<!-- <div style="width:325px;height:560px;overflow:hidden;border:1px solid red;">
+    <iframe
+        src="pages/device.html"
+        scrolling="no"
+        style="
+            width:100%;
+            height:100%;
+            border:0;
+            display:block;
+            background:transparent;
+        ">
+    </iframe>
+</div> -->
+
+<div style="width:325px;height:560px;overflow:hidden;display:flex;justify-content:center;align-items:center;">
+    <iframe
+        src="pages/device.html"
+        scrolling="no"
+        style="
+            width:320px;
+            height:620px;
+            border:0;
+            background:transparent;
+            transform:scale(0.900);
+            transform-origin:center center;
+            display:block;
+        ">
+    </iframe>
+</div>
+
+      <!-- Left quick actions -->
+      <div class="qa-bar">
+        <div class="qa" id="qaHome" disabled onclick="sendCmd({action:'home'})" title="Home">⬤</div>
+        <div class="qa" id="qaBack" disabled onclick="sendCmd({action:'back'})" title="Back">◀</div>
+        <div class="qa" id="qaRec" disabled onclick="sendCmd({action:'recents'})" title="Recents">▣</div>
+        <div class="qa-sep"></div>
+        <div class="qa" id="qaRS" disabled onclick="cmdReadScreen()" title="Read Screen">📋</div>
+      </div>
+      <!-- Phone -->
+      <div class="pf" id="pf">
+        <div class="pf-notch"></div>
+        <div class="pf-screen" id="pfs">
+          <div class="pf-prog"><div class="pf-prog-fill" id="progFill"></div></div>
+          <div class="pf-empty" id="pfEmpty">
+            <div class="pf-empty-ico">📡</div>
+            <div style="font-weight:600;font-size:11px">WebRTC Not Connected</div>
+            <div style="font-size:9px;margin-top:4px;opacity:.5">Click "Connect WebRTC" to start</div>
+          </div>
+          <svg class="bp-svg" id="bpSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="pd-layer" id="pdLayer"></div>
+          <div class="ck-overlay" id="ckOverlay"></div>
+          <div class="ehc" id="ehc"></div>
+          <canvas class="sw-cvs" id="swCvs"></canvas>
+        </div>
+      </div>
+      <!-- Right quick actions -->
+      <div class="qa-bar">
+        <div class="qa" id="qaUp" disabled onclick="sendCmd({action:'scroll',dir:'up',amt:.35})" title="Up">↑</div>
+        <div class="qa" id="qaDown" disabled onclick="sendCmd({action:'scroll',dir:'down',amt:.35})" title="Down">↓</div>
+        <div class="qa" id="qaLeft" disabled onclick="sendCmd({action:'scroll',dir:'left',amt:.35})" title="Left">←</div>
+        <div class="qa" id="qaRight" disabled onclick="sendCmd({action:'scroll',dir:'right',amt:.35})" title="Right">→</div>
+        <div class="qa-sep"></div>
+        <div class="qa a" id="qaWake" disabled onclick="cmdScreenOn()" title="Wake">☀</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RIGHT PANEL ══ -->
+<div class="right-panel" id="rightPanel">
+  <div class="rp-tabs">
+    <div class="rp-tab on" id="rtab-inspect" onclick="setRTab('inspect')">
+      <span class="rp-tab-ico">📡</span>Device
+    </div>
+    <div class="rp-tab" id="rtab-clicks" onclick="setRTab('clicks')">
+      <span class="rp-tab-ico">🎯</span>Clicks
+    </div>
+    <div class="rp-tab" id="rtab-sessions" onclick="setRTab('sessions')">
+      <span class="rp-tab-ico">📊</span>Sessions
+    </div>
+    <div class="rp-tab" id="rtab-history" onclick="setRTab('history')">
+      <span class="rp-tab-ico">📜</span>History
+    </div>
+    <div class="rp-tab" id="rtab-a11y" onclick="setRTab('a11y')">
+      <span class="rp-tab-ico">🌲</span>A11y
+    </div>
+  </div>
+
+  <!-- INSPECT TAB -->
+  <div class="rp-pane on" id="rpane-inspect" style="overflow-y:auto">
+    <div class="ins-card">
+      <div class="ins-card-title">WebRTC Connection</div>
+      <div class="ins-row"><span class="ins-k">State</span><span class="ins-v m" id="iState">Idle</span></div>
+      <div class="ins-row"><span class="ins-k">Session</span><span class="ins-v m" id="iSess">—</span></div>
+      <div class="ins-row"><span class="ins-k">Snaps Rcvd</span><span class="ins-v g" id="iSnaps">0</span></div>
+      <div class="ins-row"><span class="ins-k">Clicks Rcvd</span><span class="ins-v g" id="iClicks">0</span></div>
+      <div class="ins-row"><span class="ins-k">Avg Latency</span><span class="ins-v" id="iAvgLat">—</span></div>
+      <div class="ins-row"><span class="ins-k">Mode</span><span class="ins-v a">⚡ WebRTC P2P</span></div>
+    </div>
+    <div class="ins-card">
+      <div class="ins-card-title">Auth + Device</div>
+      <div class="ins-row"><span class="ins-k">UID</span><span class="ins-v m" id="iUid">—</span></div>
+      <div class="ins-row"><span class="ins-k">Device ID</span><span class="ins-v m" id="iDid">—</span></div>
+      <div class="ins-row"><span class="ins-k">Model</span><span class="ins-v" id="iModel">—</span></div>
+      <div class="ins-row"><span class="ins-k">Brand</span><span class="ins-v" id="iBrand">—</span></div>
+      <div class="ins-row"><span class="ins-k">Android API</span><span class="ins-v" id="iApiL">—</span></div>
+      <div class="ins-row"><span class="ins-k">Screen</span><span class="ins-v" id="iScreen">—</span></div>
+      <div class="ins-row"><span class="ins-k">Module v</span><span class="ins-v" id="iVer">—</span></div>
+      <div class="ins-row"><span class="ins-k">Last Seen</span><span class="ins-v m" id="iSeen">—</span></div>
+    </div>
+    <div class="ins-card">
+      <div class="ins-card-title">Last Click</div>
+      <div id="lastClickDom" style="font-family:var(--mono);font-size:8px;color:var(--dm2)">No click received yet</div>
+    </div>
+    <div class="ins-card">
+      <div class="ins-card-title">Hovered Element</div>
+      <div id="elemDom" style="font-family:var(--mono);font-size:8px;color:var(--dm2)">Hover a blueprint element</div>
+    </div>
+    <div class="ins-card">
+      <div class="ins-card-title">Session Stats
+        <button class="rib" onclick="exportSession()" title="Export session data">⤓ Export</button>
+      </div>
+      <div class="ins-row"><span class="ins-k">Total Snaps</span><span class="ins-v g" id="sTotalSnaps">0</span></div>
+      <div class="ins-row"><span class="ins-k">Total Clicks</span><span class="ins-v g" id="sTotalClicks">0</span></div>
+      <div class="ins-row"><span class="ins-k">Apps Seen</span><span class="ins-v" id="sApps">0</span></div>
+      <div class="ins-row"><span class="ins-k">Session Dur</span><span class="ins-v m" id="sSessDur">—</span></div>
+      <div style="margin-top:10px" id="pkgBars"></div>
+    </div>
+  </div>
+
+  <!-- CLICKS TAB -->
+  <div class="rp-pane" id="rpane-clicks">
+    <div class="click-header">
+      <span class="click-header-title">⚡ Live Click Stream</span>
+      <span class="click-badge" id="clickBadge">0</span>
+    </div>
+    <div style="flex:1;overflow-y:auto" id="clickLogDom">
+      <div class="dim-msg">
+        <span style="font-size:28px;opacity:.15">🎯</span>
+        Awaiting click events…
+      </div>
+    </div>
+  </div>
+
+  <!-- SESSIONS TAB -->
+  <div class="rp-pane" id="rpane-sessions">
+    <div class="sec-hdr">
+      Sessions (in-memory)
+      <div style="display:flex;gap:4px">
+        <button class="rib" onclick="renderSessionList()">↻</button>
+        <button class="rib red" onclick="clearSessions()">🗑</button>
+      </div>
+    </div>
+    <div class="sess-views">
+      <div class="sv-list" id="svList">
+        <div class="sv-empty"><div class="sv-empty-ico">📡</div><div>No sessions yet</div><div style="font-size:9px;color:var(--dm2)">Start a reader session to see data</div></div>
+      </div>
+      <div class="sv-detail" id="svDetail">
+        <div class="sv-back-bar">
+          <div class="sv-back-btn" onclick="backToSessions()">← Back</div>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--t);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="svBackId">—</span>
+          <span class="svc-badge" id="svBackBadge"></span>
+        </div>
+        <div class="sv-stats-strip">
+          <div class="sv-stat"><div class="sv-stat-v" id="svSnaps">0</div><div class="sv-stat-l">SNAPS</div></div>
+          <div class="sv-stat"><div class="sv-stat-v" id="svDur">—</div><div class="sv-stat-l">DURATION</div></div>
+          <div class="sv-stat"><div class="sv-stat-v" id="svClk">0</div><div class="sv-stat-l">CLICKS</div></div>
+        </div>
+        <div class="sv-snaps" id="svSnapFeed">
+          <div class="sv-empty"><div class="sv-empty-ico">🔍</div><div>No snapshots</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div class="rp-pane" id="rpane-history">
+    <div class="ch-pane">
+      <div class="ch-top">
+        <input class="ch-input" id="chSearch" placeholder="Search label, package, class…" oninput="filterHistory()"/>
+        <button class="rib" onclick="g('chSearch').value='';filterHistory()">✕</button>
+        <button class="rib" onclick="exportHistory()">⤓</button>
+      </div>
+      <div class="ch-filters" id="chFilters">
+        <span class="ch-f on" data-pkg="all" onclick="setPkgFilter('all',this)">All</span>
+      </div>
+      <div class="ch-stats-strip">
+        <div class="chs"><div class="chs-v" id="chTotal">0</div><div class="chs-l">Total</div></div>
+        <div class="chs"><div class="chs-v" id="chUniq">0</div><div class="chs-l">Labels</div></div>
+        <div class="chs"><div class="chs-v" id="chPkgs">0</div><div class="chs-l">Apps</div></div>
+        <div class="chs"><div class="chs-v" id="chSess">0</div><div class="chs-l">Sessions</div></div>
+      </div>
+      <div class="ch-feed" id="chFeed">
+        <div class="dim-msg"><span style="font-size:24px;opacity:.12">📜</span>Click history appears here</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- A11Y TAB -->
+  <div class="rp-pane" id="rpane-a11y">
+    <div class="a11y-pane">
+      <!-- Idle state -->
+      <div class="a11y-idle" id="a11yIdle">
+        <div class="a11y-idle-card">
+          <div class="a11y-idle-ico">🌲</div>
+          <div class="a11y-idle-title">Accessibility Inspector</div>
+          <div class="a11y-idle-desc">Tap the button below to start listening to live accessibility events from the device. The element tree updates in real time as the screen changes.</div>
+          <button class="a11y-start-btn" id="a11yStartBtn" disabled onclick="startA11y()">
+            ▶ Start Live A11y
+          </button>
+        </div>
+      </div>
+      <!-- Live state -->
+      <div class="a11y-live" id="a11yLive" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+        <div class="a11y-header">
+          <div class="a11y-live-dot"></div>
+          <div class="a11y-pkg-label" id="a11yPkg">—</div>
+          <div class="a11y-counts-badge" id="a11yCounts">0 els</div>
+          <button class="a11y-stop-btn" onclick="stopA11y()">⏹</button>
+        </div>
+        <div class="a11y-controls">
+          <div class="a11y-filter-row">
+            <button class="a11y-f on" id="af-all"   onclick="setA11yFilter('all',this)">All</button>
+            <button class="a11y-f"    id="af-click" onclick="setA11yFilter('click',this)">Clickable</button>
+            <button class="a11y-f"    id="af-edit"  onclick="setA11yFilter('edit',this)">Editable</button>
+            <button class="a11y-f"    id="af-text"  onclick="setA11yFilter('text',this)">Has Text</button>
+          </div>
+          <div class="a11y-search-wrap">
+            <input class="a11y-search" id="a11ySearch" placeholder="Search elements…" oninput="renderA11y()"/>
+          </div>
+        </div>
+        <div class="a11y-tree" id="a11yTree">
+          <div class="dim-msg"><span style="font-size:24px;opacity:.12">🌳</span>Waiting for snapshot…</div>
+        </div>
+        <!-- Last click clickables panel -->
+        <div class="a11y-clk-panel" id="a11yClkPanel" style="display:none">
+          <div class="a11y-clk-hdr" onclick="toggleClkPanel()">
+            <span class="a11y-clk-title">📍 LAST CLICK — ALL CLICKABLES</span>
+            <span class="a11y-clk-badge" id="a11yClkBadge">0</span>
+          </div>
+          <div class="a11y-clk-list" id="a11yClkList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BOTTOM BAR ══ -->
+<footer class="botbar">
+  <button class="bb" id="bBack" disabled onclick="sendCmd({action:'back'})">◀ Back</button>
+  <button class="bb" id="bHome" disabled onclick="sendCmd({action:'home'})">⬤ Home</button>
+  <button class="bb" id="bRec" disabled onclick="sendCmd({action:'recents'})">▣ Recent</button>
+  <div class="bsep"></div>
+  <button class="bb" id="bUp" disabled onclick="sendCmd({action:'scroll',dir:'up',amt:.35})">↑</button>
+  <button class="bb" id="bDown" disabled onclick="sendCmd({action:'scroll',dir:'down',amt:.35})">↓</button>
+  <div class="bsep"></div>
+  <button class="bb wake" id="bWake" disabled onclick="cmdScreenOn()">☀ Wake</button>
+  <div class="bsep"></div>
+  <div class="sess-ind" id="sessInd"><div class="sess-dot"></div><span id="sessIndTxt">No session</span></div>
+  <div class="bb-right" id="bbResult">Ready</div>
+</footer>
+
+<!-- ══ MOBILE NAV ══ -->
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mn-btn on" id="mn-live" onclick="mobileTab('live')"><span class="mn-ico">📱</span>Live</div>
+  <div class="mn-btn" id="mn-clicks" onclick="mobileTab('clicks')"><span class="mn-ico">🎯</span>Clicks</div>
+  <div class="mn-btn" id="mn-sessions" onclick="mobileTab('sessions')"><span class="mn-ico">📊</span>Sessions</div>
+  <div class="mn-btn" id="mn-a11y" onclick="mobileTab('a11y')"><span class="mn-ico">🌲</span>A11y</div>
+  <div class="mn-btn" id="mn-device" onclick="mobileTab('device')"><span class="mn-ico">📡</span>Device</div>
+</nav>
+
+<!-- Mobile right panel sheet -->
+<div class="mobile-sheet" id="mobileSheet">
+  <div class="ms-handle"></div>
+  <div class="ms-back">
+    <button class="ms-back-btn" onclick="closeMobileSheet()">← Close</button>
+    <div class="ms-title" id="msTitle">—</div>
+  </div>
+  <div id="msContent" style="flex:1;overflow:hidden;display:flex;flex-direction:column"></div>
+</div>
+
+<!-- Mobile element detail sheet -->
+<div class="mobile-el-sheet" id="mobileElSheet" onclick="this.classList.remove('open')">
+  <div class="mes-handle"></div>
+  <div class="mes-content" id="mesContent" onclick="event.stopPropagation()"></div>
+</div>
+
+<!-- Confirm dialog -->
+<div class="overlay" id="dlgOverlay">
+  <div class="dlg">
+    <div class="dlg-title" id="dlgTitle">Confirm</div>
+    <div class="dlg-msg" id="dlgMsg">Are you sure?</div>
+    <div class="dlg-acts">
+      <button class="dlg-cancel" onclick="closeDlg()">Cancel</button>
+      <button class="dlg-ok" onclick="doDlgAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Timeline tooltip (auto-fades) -->
+<div class="timeline-tip" id="timelineTip" style="display:none" id="timelineTip"></div>
+
+<div id="toast"><span id="tIco">ℹ</span><span id="tMsg">—</span></div>
+
+
+<script type="module">
+
+</script>
+</body>
+</html>
+

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Notif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════
+   NOTIF WIDGET — all selectors scoped to #ntf-app
+   Prefix: ntf-   |  No global body/html overrides
+═══════════════════════════════════════════════ */
+
+/* ── CSS TOKENS scoped to root element ── */
+
+</style>
+</head>
+<body>
+
+<div id="ntf-app">
+
+  <!-- ══════════ HEADER ══════════ -->
+  <header id="ntf-header">
+
+    <button id="ntf-btn-back" aria-label="Back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+
+    <div class="ntf-h-brand" id="ntf-h-brand">
+      <div class="ntf-h-brand-icon">📬</div>
+      <span class="ntf-h-brand-name">Apps</span>
+    </div>
+
+    <div id="ntf-h-app-pill">
+      <svg id="ntf-pill-icon" viewBox="0 0 24 24" fill="currentColor"></svg>
+      <span id="ntf-pill-label">App</span>
+    </div>
+
+    <div id="ntf-h-thread-title">
+      <div class="ntf-ht-name" id="ntf-ht-name">—</div>
+      <div class="ntf-ht-sub"  id="ntf-ht-sub">0 messages</div>
+    </div>
+
+    <span id="ntf-h-conv-count">0 chats</span>
+    <button id="ntf-h-clear">✕ Clear</button>
+
+    <div class="ntf-h-live" id="ntf-h-live">
+      <div class="ntf-h-live-dot"></div>LIVE
+    </div>
+  </header>
+
+  <!-- ══════════ BODY ══════════ -->
+  <div id="ntf-body-wrap">
+
+    <!-- LANDING -->
+    <div id="ntf-landing">
+
+      <!-- WhatsApp -->
+      <div class="ntf-land-half ntf-wa-half" id="ntf-land-wa">
+        <div class="ntf-land-glow"></div>
+        <div class="ntf-land-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+        </div>
+        <div class="ntf-land-texts">
+          <div class="ntf-land-app-name">WhatsApp</div>
+          <div class="ntf-land-sub">MESSAGES · GROUPS · MEDIA</div>
+        </div>
+        <div class="ntf-land-notif-badge" id="ntf-badge-wa">
+          <span id="ntf-badge-wa-count">0</span> notifications
+        </div>
+        <div class="ntf-land-cta-row">Open inbox <span>→</span></div>
+      </div>
+
+      <!-- Telegram -->
+      <div class="ntf-land-half ntf-tg-half" id="ntf-land-tg">
+        <div class="ntf-land-glow"></div>
+        <div class="ntf-land-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+          </svg>
+        </div>
+        <div class="ntf-land-texts">
+          <div class="ntf-land-app-name">Telegram</div>
+          <div class="ntf-land-sub">CHATS · CHANNELS · BOTS</div>
+        </div>
+        <div class="ntf-land-notif-badge" id="ntf-badge-tg">
+          <span id="ntf-badge-tg-count">0</span> notifications
+        </div>
+        <div class="ntf-land-cta-row">Open inbox <span>→</span></div>
+      </div>
+
+      <!-- Snapchat -->
+      <div class="ntf-land-half ntf-sc-half" id="ntf-land-sc">
+        <div class="ntf-land-glow"></div>
+        <div class="ntf-land-icon">
+          <!-- Snapchat ghost logo -->
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.024.358-.029.53.14.07.305.134.51.134.358 0 .732-.149 1.11-.443.17-.129.345-.196.508-.196.145 0 .275.047.375.134.19.164.286.438.286.813 0 .684-.548 1.22-1.248 1.22-.36 0-.67-.04-.956-.11-.03.09-.06.185-.09.28-.022.067-.04.13-.054.188.21.051.414.075.613.075.49 0 .9-.148 1.316-.308.27-.102.547-.208.835-.242.04-.006.082-.008.124-.008.385 0 .714.184.86.477.086.171.09.353.013.51-.253.53-1.039.734-1.726.905-.063.015-.126.03-.186.044-.52.123-1.17.222-2.08.354-.17.026-.342.052-.517.08.04.113.088.213.136.315.14.3.294.634.34 1.03.047.395-.068.706-.31.898-.39.3-.918.326-1.416.293l-.024-.002a8.81 8.81 0 01-2.02.37 5.48 5.48 0 01-.21.01c-.92 0-1.674-.335-2.27-.657-.02-.012-.042-.014-.065-.014-.022 0-.043.002-.063.013-.597.323-1.35.658-2.272.658-.07 0-.14-.003-.21-.01a8.81 8.81 0 01-2.02-.37l-.023.002c-.498.033-1.026.007-1.416-.293-.242-.192-.357-.503-.31-.898.046-.396.2-.73.34-1.03.048-.102.096-.202.136-.315-.175-.028-.347-.054-.517-.08-.91-.132-1.56-.23-2.08-.354-.06-.014-.123-.03-.186-.044-.687-.17-1.473-.374-1.726-.905-.077-.157-.073-.339.013-.51.146-.293.475-.477.86-.477.042 0 .084.002.124.008.288.034.565.14.835.242.416.16.826.308 1.316.308.2 0 .403-.024.613-.075-.014-.058-.032-.121-.054-.188-.03-.095-.06-.19-.09-.28-.286.07-.596.11-.956.11-.7 0-1.248-.536-1.248-1.22 0-.375.096-.65.286-.813.1-.087.23-.134.375-.134.163 0 .338.067.508.196.378.294.752.443 1.11.443.205 0 .37-.064.51-.134-.005-.172-.017-.35-.029-.53l-.003-.06c-.104-1.628-.23-3.654.299-4.847C7.859 1.07 11.216.793 12.206.793z"/>
+          </svg>
+        </div>
+        <div class="ntf-land-texts">
+          <div class="ntf-land-app-name">Snapchat</div>
+          <div class="ntf-land-sub">SNAPS · STORIES · CHAT</div>
+        </div>
+        <div class="ntf-land-notif-badge" id="ntf-badge-sc">
+          <span id="ntf-badge-sc-count">0</span> notifications
+        </div>
+        <div class="ntf-land-cta-row">Open inbox <span>→</span></div>
+      </div>
+
+    </div><!-- /#ntf-landing -->
+
+    <!-- SIDEBAR / CONV PANEL -->
+    <div id="ntf-sidebar-panel">
+      <div class="ntf-search-bar">
+        <div class="ntf-search-bar-inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="ntf-search-input" placeholder="Search chats…" autocomplete="off"/>
+        </div>
+      </div>
+      <ul id="ntf-thread-list"></ul>
+    </div>
+
+    <!-- MESSAGE PANEL -->
+    <div id="ntf-message-panel">
+
+      <!-- Empty state -->
+      <div id="ntf-empty-state">
+        <div class="ntf-empty-card">
+          <div class="ntf-empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="ntf-empty-title" id="ntf-empty-title">Select a chat</div>
+          <div class="ntf-empty-hint">Pick a conversation from<br>the list to view messages</div>
+        </div>
+      </div>
+
+      <!-- Thread header bar (desktop) -->
+      <div id="ntf-thread-header">
+        <div class="ntf-thread-av" id="ntf-thread-av">?</div>
+        <span class="ntf-thread-sender-name" id="ntf-thread-sender-name">—</span>
+        <span class="ntf-thread-app-badge"   id="ntf-thread-app-badge">App</span>
+        <span class="ntf-thread-msg-count"   id="ntf-thread-msg-count"></span>
+        <button id="ntf-clear-thread-desk">✕ Clear</button>
+      </div>
+
+      <!-- Messages scroll area -->
+      <div id="ntf-messages-area" class="ntf-visually-hidden">
+        <div id="ntf-load-trigger"></div>
+      </div>
+
+      <!-- Status bar -->
+      <div id="ntf-thread-statusbar">
+        <span id="ntf-statusbar-info">0 messages · —</span>
+        <div class="ntf-statusbar-app-indicator">
+          <div class="ntf-statusbar-dot"></div>
+          <span id="ntf-statusbar-appname">—</span>
+        </div>
+      </div>
+
+    </div><!-- /#ntf-message-panel -->
+
+  </div><!-- /#ntf-body-wrap -->
+</div><!-- /#ntf-app -->
+
+<!-- Fullscreen image overlay (outside #ntf-app so fixed pos works cleanly) -->
+<div id="ntf-fullscreen-overlay">
+  <img id="ntf-fullscreen-img" src="" alt=""/>
+</div>
+
+<script type="module">
+
+</script>
+</body>
+</html>
